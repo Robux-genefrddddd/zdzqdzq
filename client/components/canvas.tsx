@@ -137,12 +137,13 @@ export function Canvas({
     const y = (e.clientY - rect.top) / zoom - panY;
 
     // Don't create if barely dragged
+    const shapeTypeParam = activeTool === "shape" ? activeShapeType : undefined;
     if (Math.abs(x - createStart.x) < 10 && Math.abs(y - createStart.y) < 10) {
-      onAddElement(activeTool, createStart.x, createStart.y);
+      onAddElement(activeTool, createStart.x, createStart.y, shapeTypeParam);
     } else {
       const width = Math.max(50, x - createStart.x);
       const height = Math.max(50, y - createStart.y);
-      const id = onAddElement(activeTool, createStart.x, createStart.y);
+      const id = onAddElement(activeTool, createStart.x, createStart.y, shapeTypeParam);
       onUpdateElement(id, { width, height });
     }
 

@@ -123,7 +123,7 @@ export function CanvasElement({
         opacity,
         cursor: isDragging ? "grabbing" : "grab",
       }}
-      onClick={onSelect}
+      onClick={handleClick}
       onMouseDown={handleMouseDown}
     >
       {/* Element Box */}

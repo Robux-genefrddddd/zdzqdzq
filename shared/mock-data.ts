@@ -174,6 +174,7 @@ export const mockEditorFile: EditorFile = {
               fontSize: 24,
               fontWeight: "600",
               textAlign: "left",
+              borderRadius: 0,
             },
           },
         },

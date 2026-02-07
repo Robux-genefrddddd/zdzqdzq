@@ -57,10 +57,43 @@ export interface LayerProperties {
   shapeType?: "rectangle" | "circle" | "triangle" | "polygon" | "line"; // For shape elements
 }
 
+export interface PathPoint {
+  x: number;
+  y: number;
+}
+
+export interface Path {
+  points: PathPoint[];
+  closed: boolean;
+  stroke?: string;
+  strokeWidth?: number;
+  fill?: string | null;
+}
+
+export interface Comment {
+  text: string;
+  author?: string;
+  createdAt?: Date;
+}
+
+export interface FrameProperties extends LayerProperties {
+  isFrame: true;
+}
+
+export interface TextBoxProperties extends LayerProperties {
+  isTextBox: true;
+  content: string;
+}
+
+export interface PathProperties extends LayerProperties {
+  path: Path;
+}
+
 export interface Layer {
   id: string;
   name: string;
-  type: "frame" | "text" | "shape" | "component";
-  properties?: LayerProperties;
+  type: "frame" | "text" | "shape" | "component" | "path" | "comment";
+  properties?: LayerProperties | FrameProperties | TextBoxProperties | PathProperties;
+  comment?: Comment; // For comment type
   children?: Layer[];
 }

@@ -113,7 +113,7 @@ export function CanvasElement({
   const backgroundColor = style.fill ? style.fill : "transparent";
   const opacity = style.opacity ?? 1;
 
-  return (
+  const elementContent = (
     <div
       ref={elementRef}
       className={cn(

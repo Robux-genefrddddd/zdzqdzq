@@ -35,10 +35,15 @@ export default function Editor() {
   }, []);
 
   const handleAddElement = useCallback(
-    (type: string, x: number, y: number) => {
+    (type: string, x: number, y: number, shapeType?: string) => {
+      let displayType = type.charAt(0).toUpperCase() + type.slice(1);
+      if (shapeType) {
+        displayType = shapeType.charAt(0).toUpperCase() + shapeType.slice(1);
+      }
+
       const newElement: Layer = {
         id: `layer-${Date.now()}`,
-        name: `${type.charAt(0).toUpperCase() + type.slice(1)} ${elements.length + 1}`,
+        name: `${displayType} ${elements.length + 1}`,
         type: type as any,
         properties: {
           x,
@@ -48,11 +53,12 @@ export default function Editor() {
           style: {
             fill: "#ffffff",
             stroke: null,
-            borderRadius: 8,
+            borderRadius: shapeType === "circle" ? 100 : 8,
             fontSize: type === "text" ? 14 : undefined,
             fontWeight: type === "text" ? "500" : undefined,
             opacity: 1,
           },
+          shapeType: shapeType as any,
         },
       };
 

@@ -8,7 +8,6 @@ import {
   Hand,
   Zap,
 } from "lucide-react";
-import { useState } from "react";
 
 type ToolType =
   | "select"
@@ -20,8 +19,12 @@ type ToolType =
   | "hand"
   | "component";
 
-export function EditorToolbar() {
-  const [activeTool, setActiveTool] = useState<ToolType>("select");
+interface EditorToolbarProps {
+  activeTool?: string;
+  onToolChange?: (tool: ToolType) => void;
+}
+
+export function EditorToolbar({ activeTool = "select", onToolChange }: EditorToolbarProps) {
 
   const tools: Array<{
     id: ToolType;

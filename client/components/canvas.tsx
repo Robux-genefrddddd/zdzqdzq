@@ -69,13 +69,28 @@ export function Canvas({
   };
 
   const handleCanvasMouseMove = (e: React.MouseEvent) => {
-    if (!isCanvasCreating || !canvasRef.current) return;
+    if (!canvasRef.current) return;
 
     const rect = canvasRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) / zoom - panX;
     const y = (e.clientY - rect.top) / zoom - panY;
 
-    // Show live preview while dragging
+    // Lasso selection
+    if (isLassoSelecting) {
+      const width = x - lassoStart.x;
+      const height = y - lassoStart.y;
+      setLassoRect({
+        x: width > 0 ? lassoStart.x : x,
+        y: height > 0 ? lassoStart.y : y,
+        width: Math.abs(width),
+        height: Math.abs(height),
+      });
+      return;
+    }
+
+    // Show live preview while dragging for element creation
+    if (!isCanvasCreating) return;
+
     const width = Math.max(50, x - createStart.x);
     const height = Math.max(50, y - createStart.y);
     setPreviewRect({

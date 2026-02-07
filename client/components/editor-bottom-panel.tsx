@@ -9,62 +9,70 @@ interface EditorBottomPanelProps {
 
 export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBottomPanelProps) {
   const [showComments, setShowComments] = useState(false);
-  const [comments, setComments] = useState<Array<{ id: string; text: string; author: string; timestamp: Date }>>([]);
+  const [elementComments, setElementComments] = useState<
+    Record<string, Array<{ id: string; text: string; author: string; timestamp: Date }>>
+  >({});
   const [newComment, setNewComment] = useState("");
 
-  const handleToggleComments = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setShowComments(!showComments);
-    },
-    [showComments]
-  );
+  const currentElementId = selectedElement?.id;
+  const currentComments = currentElementId ? (elementComments[currentElementId] || []) : [];
+
+  // Prevent any event from reaching canvas
+  const preventPropagation = useCallback((e: React.MouseEvent | React.KeyboardEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleCommentButtonClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    preventPropagation(e);
+    setShowComments((prev) => !prev);
+  }, [preventPropagation]);
 
   const handleAddComment = useCallback(
-    (e?: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLInputElement>) => {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      if (newComment.trim() && selectedElement) {
-        setComments([
-          ...comments,
+    (e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLInputElement>) => {
+      preventPropagation(e);
+      
+      if (!currentElementId || !newComment.trim()) return;
+
+      setElementComments((prev) => ({
+        ...prev,
+        [currentElementId]: [
+          ...(prev[currentElementId] || []),
           {
             id: `comment-${Date.now()}`,
             text: newComment,
             author: "You",
             timestamp: new Date(),
           },
-        ]);
-        setNewComment("");
-      }
+        ],
+      }));
+      setNewComment("");
     },
-    [newComment, selectedElement, comments]
+    [currentElementId, newComment, preventPropagation]
   );
 
-  const handleDeleteComment = useCallback((id: string, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setComments((prev) => prev.filter((c) => c.id !== id));
-  }, []);
+  const handleDeleteComment = useCallback(
+    (commentId: string, e: React.MouseEvent<HTMLButtonElement>) => {
+      preventPropagation(e);
+      
+      if (!currentElementId) return;
 
-  // Default view when nothing selected
+      setElementComments((prev) => ({
+        ...prev,
+        [currentElementId]: (prev[currentElementId] || []).filter(
+          (c) => c.id !== commentId
+        ),
+      }));
+    },
+    [currentElementId, preventPropagation]
+  );
+
+  // No element selected - show basic info
   if (!selectedElement || !selectedElement.properties) {
     return (
-      <div
-        className="border-t border-border bg-background/50 px-6 py-3 text-xs text-muted-foreground flex items-center justify-between pointer-events-auto"
-        onMouseDown={(e) => {
-          e.stopPropagation();
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-      >
+      <div className="border-t border-border bg-background/50 px-6 py-3 text-xs text-muted-foreground flex items-center justify-between select-none">
         <span>{elementsCount} element{elementsCount !== 1 ? "s" : ""} on canvas</span>
-        <div className="flex items-center gap-4">
-          <span className="text-xs text-muted-foreground/60">No element selected • Press V to select</span>
-        </div>
+        <span className="text-xs text-muted-foreground/60">No element selected • Press V to select</span>
       </div>
     );
   }
@@ -74,16 +82,12 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
 
   return (
     <div
-      className="border-t border-border bg-background/50 pointer-events-auto"
-      onMouseDown={(e) => {
-        e.stopPropagation();
-      }}
-      onClick={(e) => {
-        e.stopPropagation();
-      }}
+      className="border-t border-border bg-background/50 select-none"
+      onMouseDown={preventPropagation}
+      onClick={preventPropagation}
     >
       {/* Main Status Row */}
-      <div className="px-6 py-3 flex items-center justify-between text-xs border-b border-border/50">
+      <div className="px-6 py-3 flex items-center justify-between text-xs">
         <div className="flex items-center gap-8 flex-1">
           {/* Element Info */}
           <div className="flex items-center gap-4">
@@ -144,39 +148,29 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
           {/* Quick Actions */}
           <div className="flex items-center gap-2">
             <button
-              onClick={handleToggleComments}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              className="p-1 rounded hover:bg-foreground/10 transition-colors text-muted-foreground hover:text-foreground pointer-events-auto"
-              title={`Comments (${comments.length})`}
+              onClick={handleCommentButtonClick}
+              className="p-1 rounded hover:bg-foreground/10 transition-colors text-muted-foreground hover:text-foreground cursor-pointer"
+              title={`Comments (${currentComments.length})`}
               type="button"
             >
               <MessageCircle size={14} />
-              {comments.length > 0 && (
-                <span className="ml-1 text-xs text-foreground">{comments.length}</span>
+              {currentComments.length > 0 && (
+                <span className="ml-1 text-xs text-foreground">{currentComments.length}</span>
               )}
             </button>
             <button
-              onMouseDown={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              className="p-1 rounded hover:bg-foreground/10 transition-colors text-muted-foreground hover:text-foreground pointer-events-auto"
+              className="p-1 rounded hover:bg-foreground/10 transition-colors text-muted-foreground hover:text-foreground cursor-pointer"
               title="Visibility"
               type="button"
+              onClick={preventPropagation}
             >
               <Eye size={14} />
             </button>
             <button
-              onMouseDown={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              className="p-1 rounded hover:bg-foreground/10 transition-colors text-muted-foreground hover:text-foreground pointer-events-auto"
+              className="p-1 rounded hover:bg-foreground/10 transition-colors text-muted-foreground hover:text-foreground cursor-pointer"
               title="Lock"
               type="button"
+              onClick={preventPropagation}
             >
               <Lock size={14} />
             </button>
@@ -191,32 +185,23 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
         </div>
       </div>
 
-      {/* Comments Section */}
-      {showComments && (
-        <div
-          className="px-6 py-3 border-t border-border/50 bg-secondary/20 space-y-3 pointer-events-auto"
-          onMouseDown={(e) => {
-            e.stopPropagation();
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-        >
+      {/* Comments Section - Only show if toggled AND element is selected */}
+      {showComments && currentElementId && (
+        <div className="px-6 py-3 border-t border-border/50 bg-secondary/20 space-y-3">
           <div className="flex items-center gap-2 mb-2">
             <MessageCircle size={14} className="text-muted-foreground" />
-            <span className="text-xs font-medium text-foreground">Comments ({comments.length})</span>
+            <span className="text-xs font-medium text-foreground">
+              Comments ({currentComments.length})
+            </span>
           </div>
 
           {/* Comments List */}
-          {comments.length > 0 && (
+          {currentComments.length > 0 && (
             <div className="space-y-2 mb-3 max-h-32 overflow-y-auto">
-              {comments.map((comment) => (
+              {currentComments.map((comment) => (
                 <div
                   key={comment.id}
                   className="flex items-start gap-2 p-2 bg-background rounded border border-border/50 text-xs"
-                  onMouseDown={(e) => {
-                    e.stopPropagation();
-                  }}
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
@@ -228,15 +213,11 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
                         })}
                       </span>
                     </div>
-                    <p className="text-foreground/80 mt-1">{comment.text}</p>
+                    <p className="text-foreground/80 mt-1 break-words">{comment.text}</p>
                   </div>
                   <button
                     onClick={(e) => handleDeleteComment(comment.id, e)}
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                    className="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
+                    className="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0 cursor-pointer"
                     title="Delete comment"
                     type="button"
                   >
@@ -248,41 +229,26 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
           )}
 
           {/* Add Comment Form */}
-          <div
-            className="flex items-center gap-2"
-            onMouseDown={(e) => {
-              e.stopPropagation();
-            }}
-          >
+          <div className="flex items-center gap-2">
             <input
               type="text"
               placeholder="Add a comment..."
               value={newComment}
               onChange={(e) => {
-                e.stopPropagation();
+                preventPropagation(e as any);
                 setNewComment(e.target.value);
               }}
               onKeyPress={(e) => {
                 if (e.key === "Enter") {
-                  handleAddComment(e as any);
+                  handleAddComment(e);
                 }
-              }}
-              onMouseDown={(e) => {
-                e.stopPropagation();
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
               }}
               className="flex-1 px-2 py-1 text-xs rounded border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
             <button
-              onClick={(e) => handleAddComment(e)}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
+              onClick={handleAddComment}
               disabled={!newComment.trim()}
-              className="px-2 py-1 text-xs rounded bg-blue-500 text-white hover:bg-blue-600 disabled:bg-muted-foreground/50 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+              className="px-2 py-1 text-xs rounded bg-blue-500 text-white hover:bg-blue-600 disabled:bg-muted-foreground/50 disabled:cursor-not-allowed transition-colors flex-shrink-0 cursor-pointer"
               type="button"
             >
               Send

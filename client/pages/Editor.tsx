@@ -84,7 +84,7 @@ export default function Editor() {
           width,
           height,
           style: {
-            fill: null,
+            fill: type === "text" ? null : "#6366f1",
             stroke: null,
             borderRadius,
             fontSize: type === "text" ? 14 : undefined,

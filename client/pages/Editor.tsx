@@ -6,6 +6,7 @@ import { EditorPropertiesPanel } from "@/components/editor-properties-panel";
 import { EditorToolbar } from "@/components/editor-toolbar";
 import { EditorBottomPanel } from "@/components/editor-bottom-panel";
 import { Canvas } from "@/components/canvas";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { mockFiles, mockEditorFile } from "@shared/mock-data";
 import type { Layer, PathPoint } from "@shared/types";
 

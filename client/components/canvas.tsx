@@ -48,12 +48,21 @@ export function Canvas({
   const [lassoStart, setLassoStart] = useState({ x: 0, y: 0 });
 
   const handleCanvasMouseDown = (e: React.MouseEvent) => {
-    if (activeTool === "select") return;
     if (!canvasRef.current) return;
 
     const rect = canvasRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) / zoom - panX;
     const y = (e.clientY - rect.top) / zoom - panY;
+
+    // Lasso selection in select mode
+    if (activeTool === "select" && e.target === canvasRef.current) {
+      setIsLassoSelecting(true);
+      setLassoStart({ x, y });
+      return;
+    }
+
+    // Element creation mode
+    if (activeTool === "select") return;
 
     setIsCanvasCreating(true);
     setCreateStart({ x, y });

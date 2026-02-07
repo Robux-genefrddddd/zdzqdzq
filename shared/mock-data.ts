@@ -152,10 +152,10 @@ export const mockEditorFile: EditorFile = {
             width: 400,
             height: 300,
             style: {
-              fill: "#ffffff",
-              borderRadius: 12,
-              stroke: "#e5e7eb",
+              fill: undefined,
+              stroke: "#d1d5db",
               strokeWidth: 1,
+              borderRadius: 12,
             },
           },
         },

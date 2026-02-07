@@ -140,6 +140,24 @@ export function Canvas({
             />
           ))
         )}
+
+        {/* Live Preview Rectangle while dragging */}
+        {previewRect && (
+          <div
+            style={{
+              position: "absolute",
+              left: `${previewRect.x}px`,
+              top: `${previewRect.y}px`,
+              width: `${previewRect.width}px`,
+              height: `${previewRect.height}px`,
+              backgroundColor: "rgba(99, 102, 241, 0.2)",
+              border: "2px solid #6366f1",
+              borderRadius: "8px",
+              pointerEvents: "none",
+              zIndex: 10,
+            }}
+          />
+        )}
       </div>
     </div>
   );

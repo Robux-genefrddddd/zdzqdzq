@@ -12,6 +12,8 @@ interface CanvasElementProps {
     width?: number;
     height?: number;
   }) => void;
+  onDelete?: () => void;
+  onDuplicate?: () => void;
   zoom: number;
 }
 

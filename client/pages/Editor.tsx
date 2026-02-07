@@ -169,6 +169,105 @@ export default function Editor() {
     setSelectedElementId(newElement.id);
   }, [elements.length]);
 
+  // Undo/Redo functionality
+  const handleUndo = useCallback(() => {
+    if (historyIndex > 0) {
+      const newIndex = historyIndex - 1;
+      setHistoryIndex(newIndex);
+      setElements(history[newIndex]);
+    }
+  }, [history, historyIndex]);
+
+  const handleRedo = useCallback(() => {
+    if (historyIndex < history.length - 1) {
+      const newIndex = historyIndex + 1;
+      setHistoryIndex(newIndex);
+      setElements(history[newIndex]);
+    }
+  }, [history, historyIndex]);
+
+  // Update history when elements change (for undo/redo)
+  const updateHistory = useCallback((newElements: Layer[]) => {
+    const newHistory = history.slice(0, historyIndex + 1);
+    newHistory.push(newElements);
+    setHistory(newHistory);
+    setHistoryIndex(newHistory.length - 1);
+  }, [history, historyIndex]);
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts({
+    onSelectTool: (tool: string) => {
+      const shapeTypes = ["rectangle", "circle", "triangle", "polygon", "line", "arrow", "star"];
+      if (shapeTypes.includes(tool)) {
+        setActiveShapeType(tool);
+      }
+
+      // Handle temporary hand tool
+      if (tool === "hand") {
+        // Hand tool only activates temporarily via Space
+        return;
+      }
+
+      setPreviousTool(activeTool);
+      setActiveTool(tool);
+    },
+    onDelete: () => {
+      if (selectedElementId) {
+        handleDeleteElement(selectedElementId);
+      }
+    },
+    onSelectAll: () => {
+      // Mock: show all elements as selected (in real implementation, would multiselect)
+      if (elements.length > 0) {
+        setSelectedElementId(elements[0].id);
+      }
+    },
+    onDuplicate: () => {
+      if (selectedElementId) {
+        handleDuplicateElement(selectedElementId);
+      }
+    },
+    onGroup: () => {
+      // Mock: grouping not fully implemented
+      console.log("Group action (not yet implemented)");
+    },
+    onUngroup: () => {
+      // Mock: ungrouping not fully implemented
+      console.log("Ungroup action (not yet implemented)");
+    },
+    onUndo: handleUndo,
+    onRedo: handleRedo,
+    onZoom: (action: string) => {
+      if (action === "in") {
+        setZoom((prev) => Math.min(prev * 1.2, 5));
+      } else if (action === "out") {
+        setZoom((prev) => Math.max(prev / 1.2, 0.1));
+      } else if (action === "reset") {
+        setZoom(1);
+        setPanX(0);
+        setPanY(0);
+      } else if (action === "fit") {
+        // Fit all elements in view
+        setZoom(1);
+        setPanX(0);
+        setPanY(0);
+      }
+    },
+    onTemporaryHandTool: (active: boolean) => {
+      if (active) {
+        setPreviousTool(activeTool);
+        setActiveTool("hand");
+      } else {
+        // Return to previous tool
+        setActiveTool(previousTool);
+      }
+    },
+    onEscapeAction: () => {
+      // Escape: deselect or cancel current action
+      setSelectedElementId(null);
+    },
+  });
+
   return (
     <div className="flex h-screen bg-background">
       {/* Left Toolbar - Vertical Icons */}

@@ -24,6 +24,7 @@ export function Canvas({
   panX,
   panY,
   activeTool = "select",
+  activeShapeType = "rectangle",
   onSelectElement,
   onAddElement,
   onUpdateElement,

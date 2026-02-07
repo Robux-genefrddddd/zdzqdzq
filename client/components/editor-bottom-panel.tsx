@@ -1,5 +1,5 @@
 import { Layer } from "@shared/types";
-import { MessageCircle, Eye, Lock } from "lucide-react";
+import { MessageCircle, X } from "lucide-react";
 import { useState, useCallback } from "react";
 
 interface EditorBottomPanelProps {
@@ -8,71 +8,50 @@ interface EditorBottomPanelProps {
 }
 
 export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBottomPanelProps) {
-  const [showComments, setShowComments] = useState(false);
+  const [showCommentBubble, setShowCommentBubble] = useState(false);
   const [elementComments, setElementComments] = useState<
-    Record<string, Array<{ id: string; text: string; author: string; timestamp: Date }>>
+    Record<string, string[]>
   >({});
   const [newComment, setNewComment] = useState("");
 
   const currentElementId = selectedElement?.id;
   const currentComments = currentElementId ? (elementComments[currentElementId] || []) : [];
 
-  // Prevent any event from reaching canvas
-  const preventPropagation = useCallback((e: React.MouseEvent | React.KeyboardEvent) => {
+  // Simply prevent event from going anywhere
+  const stopEvent = useCallback((e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
   }, []);
 
-  const handleCommentButtonClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    preventPropagation(e);
-    setShowComments((prev) => !prev);
-  }, [preventPropagation]);
+  const handleAddComment = useCallback(() => {
+    if (!currentElementId || !newComment.trim()) return;
 
-  const handleAddComment = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLInputElement>) => {
-      preventPropagation(e);
-      
-      if (!currentElementId || !newComment.trim()) return;
-
-      setElementComments((prev) => ({
-        ...prev,
-        [currentElementId]: [
-          ...(prev[currentElementId] || []),
-          {
-            id: `comment-${Date.now()}`,
-            text: newComment,
-            author: "You",
-            timestamp: new Date(),
-          },
-        ],
-      }));
-      setNewComment("");
-    },
-    [currentElementId, newComment, preventPropagation]
-  );
+    setElementComments((prev) => ({
+      ...prev,
+      [currentElementId]: [...(prev[currentElementId] || []), newComment.trim()],
+    }));
+    setNewComment("");
+  }, [currentElementId, newComment]);
 
   const handleDeleteComment = useCallback(
-    (commentId: string, e: React.MouseEvent<HTMLButtonElement>) => {
-      preventPropagation(e);
-      
+    (index: number) => {
       if (!currentElementId) return;
 
       setElementComments((prev) => ({
         ...prev,
         [currentElementId]: (prev[currentElementId] || []).filter(
-          (c) => c.id !== commentId
+          (_, i) => i !== index
         ),
       }));
     },
-    [currentElementId, preventPropagation]
+    [currentElementId]
   );
 
-  // No element selected - show basic info
+  // No element selected
   if (!selectedElement || !selectedElement.properties) {
     return (
-      <div className="border-t border-border bg-background/50 px-6 py-3 text-xs text-muted-foreground flex items-center justify-between select-none">
-        <span>{elementsCount} element{elementsCount !== 1 ? "s" : ""} on canvas</span>
-        <span className="text-xs text-muted-foreground/60">No element selected • Press V to select</span>
+      <div className="border-t border-border bg-background/50 px-6 py-2 text-xs text-muted-foreground flex items-center justify-between">
+        <span>{elementsCount} element{elementsCount !== 1 ? "s" : ""}</span>
       </div>
     );
   }
@@ -81,174 +60,149 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
   const { x, y, width, height, style = {} } = properties;
 
   return (
-    <div
-      className="border-t border-border bg-background/50 select-none"
-      onMouseDown={preventPropagation}
-      onClick={preventPropagation}
-    >
-      {/* Main Status Row */}
-      <div className="px-6 py-3 flex items-center justify-between text-xs">
-        <div className="flex items-center gap-8 flex-1">
-          {/* Element Info */}
-          <div className="flex items-center gap-4">
-            <span className="text-muted-foreground">Selected:</span>
-            <span className="font-medium text-foreground">{selectedElement.name}</span>
-            <span className="text-muted-foreground/70 text-xs">({selectedElement.type})</span>
+    <div className="border-t border-border bg-background/50 relative">
+      {/* Simple Status Bar */}
+      <div className="px-6 py-2 text-xs flex items-center justify-between">
+        <div className="flex items-center gap-6">
+          {/* Element name */}
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground">{selectedElement.name}</span>
+            <span className="text-muted-foreground/50">·</span>
+            <span className="text-muted-foreground/70">{selectedElement.type}</span>
           </div>
 
-          {/* Divider */}
-          <div className="h-4 w-px bg-border/30" />
+          {/* Position */}
+          <span className="text-muted-foreground">
+            {Math.round(x)}, {Math.round(y)}
+          </span>
 
-          {/* Position & Size */}
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">Position:</span>
-              <span className="font-mono text-foreground">
-                {Math.round(x)}, {Math.round(y)}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">Size:</span>
-              <span className="font-mono text-foreground">
-                {Math.round(width)} × {Math.round(height)}
-              </span>
-            </div>
-          </div>
+          {/* Size */}
+          <span className="text-muted-foreground">
+            {Math.round(width)} × {Math.round(height)}
+          </span>
 
-          {/* Divider */}
-          <div className="h-4 w-px bg-border/30" />
-
-          {/* Style Info */}
-          <div className="flex items-center gap-6">
+          {/* Fill */}
+          {style.fill && (
             <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">Fill:</span>
-              {style.fill ? (
-                <div className="flex items-center gap-1">
-                  <div
-                    className="w-3 h-3 rounded border border-border"
-                    style={{ backgroundColor: style.fill }}
-                  />
-                  <span className="font-mono text-foreground text-xs">{style.fill}</span>
-                </div>
-              ) : (
-                <span className="text-muted-foreground/70 text-xs">None</span>
-              )}
+              <div
+                className="w-3 h-3 rounded border border-border"
+                style={{ backgroundColor: style.fill }}
+              />
+              <span className="text-muted-foreground text-xs">{style.fill}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">Opacity:</span>
-              <span className="font-mono text-foreground">{Math.round((style.opacity ?? 1) * 100)}%</span>
-            </div>
-          </div>
+          )}
         </div>
 
-        {/* Right Side - Actions & Counter */}
+        {/* Right side - comment button */}
         <div className="flex items-center gap-4">
-          <div className="h-4 w-px bg-border/30" />
+          <button
+            onClick={(e) => {
+              stopEvent(e);
+              setShowCommentBubble(!showCommentBubble);
+            }}
+            onMouseDown={stopEvent}
+            className="p-1 hover:bg-foreground/10 rounded transition-colors text-muted-foreground hover:text-foreground relative"
+            title="Comments"
+            type="button"
+          >
+            <MessageCircle size={14} />
+            {currentComments.length > 0 && (
+              <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                {currentComments.length}
+              </span>
+            )}
+          </button>
 
-          {/* Quick Actions */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleCommentButtonClick}
-              className="p-1 rounded hover:bg-foreground/10 transition-colors text-muted-foreground hover:text-foreground cursor-pointer"
-              title={`Comments (${currentComments.length})`}
-              type="button"
-            >
-              <MessageCircle size={14} />
-              {currentComments.length > 0 && (
-                <span className="ml-1 text-xs text-foreground">{currentComments.length}</span>
-              )}
-            </button>
-            <button
-              className="p-1 rounded hover:bg-foreground/10 transition-colors text-muted-foreground hover:text-foreground cursor-pointer"
-              title="Visibility"
-              type="button"
-              onClick={preventPropagation}
-            >
-              <Eye size={14} />
-            </button>
-            <button
-              className="p-1 rounded hover:bg-foreground/10 transition-colors text-muted-foreground hover:text-foreground cursor-pointer"
-              title="Lock"
-              type="button"
-              onClick={preventPropagation}
-            >
-              <Lock size={14} />
-            </button>
-          </div>
-
-          <div className="h-4 w-px bg-border/30" />
-
-          {/* Total Elements Counter */}
-          <div className="text-muted-foreground text-xs">
+          <span className="text-muted-foreground text-xs">
             {elementsCount} layer{elementsCount !== 1 ? "s" : ""}
-          </div>
+          </span>
         </div>
       </div>
 
-      {/* Comments Section - Only show if toggled AND element is selected */}
-      {showComments && currentElementId && (
-        <div className="px-6 py-3 border-t border-border/50 bg-secondary/20 space-y-3">
-          <div className="flex items-center gap-2 mb-2">
-            <MessageCircle size={14} className="text-muted-foreground" />
-            <span className="text-xs font-medium text-foreground">
-              Comments ({currentComments.length})
-            </span>
+      {/* Comment Bubble - Floating popup */}
+      {showCommentBubble && currentElementId && (
+        <div
+          className="fixed bottom-16 right-6 w-80 bg-background border border-border rounded-lg shadow-xl z-50"
+          onMouseDown={stopEvent}
+          onClick={stopEvent}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between p-3 border-b border-border">
+            <div className="flex items-center gap-2">
+              <MessageCircle size={16} className="text-foreground" />
+              <span className="text-sm font-medium text-foreground">Comments</span>
+            </div>
+            <button
+              onClick={(e) => {
+                stopEvent(e);
+                setShowCommentBubble(false);
+              }}
+              onMouseDown={stopEvent}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+              type="button"
+            >
+              <X size={16} />
+            </button>
           </div>
 
           {/* Comments List */}
-          {currentComments.length > 0 && (
-            <div className="space-y-2 mb-3 max-h-32 overflow-y-auto">
-              {currentComments.map((comment) => (
-                <div
-                  key={comment.id}
-                  className="flex items-start gap-2 p-2 bg-background rounded border border-border/50 text-xs"
-                >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">{comment.author}</span>
-                      <span className="text-muted-foreground text-xs">
-                        {new Date(comment.timestamp).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
-                    </div>
-                    <p className="text-foreground/80 mt-1 break-words">{comment.text}</p>
-                  </div>
-                  <button
-                    onClick={(e) => handleDeleteComment(comment.id, e)}
-                    className="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0 cursor-pointer"
-                    title="Delete comment"
-                    type="button"
+          <div className="max-h-48 overflow-y-auto">
+            {currentComments.length === 0 ? (
+              <div className="p-3 text-xs text-muted-foreground text-center">
+                No comments yet
+              </div>
+            ) : (
+              <div className="space-y-2 p-3">
+                {currentComments.map((comment, index) => (
+                  <div
+                    key={index}
+                    className="bg-secondary/50 rounded p-2 text-xs text-foreground flex items-start gap-2 group"
                   >
-                    ✕
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
+                    <span className="flex-1 break-words">{comment}</span>
+                    <button
+                      onClick={(e) => {
+                        stopEvent(e);
+                        handleDeleteComment(index);
+                      }}
+                      onMouseDown={stopEvent}
+                      className="text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                      type="button"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-          {/* Add Comment Form */}
-          <div className="flex items-center gap-2">
+          {/* Input Area */}
+          <div className="border-t border-border p-3 space-y-2">
             <input
               type="text"
-              placeholder="Add a comment..."
+              placeholder="Add comment..."
               value={newComment}
               onChange={(e) => {
-                preventPropagation(e as any);
+                stopEvent(e as any);
                 setNewComment(e.target.value);
               }}
               onKeyPress={(e) => {
                 if (e.key === "Enter") {
-                  handleAddComment(e);
+                  handleAddComment();
                 }
               }}
-              className="flex-1 px-2 py-1 text-xs rounded border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
+              onMouseDown={stopEvent}
+              className="w-full px-2 py-1 text-xs rounded border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
+              autoFocus
             />
             <button
-              onClick={handleAddComment}
+              onClick={(e) => {
+                stopEvent(e);
+                handleAddComment();
+              }}
+              onMouseDown={stopEvent}
               disabled={!newComment.trim()}
-              className="px-2 py-1 text-xs rounded bg-blue-500 text-white hover:bg-blue-600 disabled:bg-muted-foreground/50 disabled:cursor-not-allowed transition-colors flex-shrink-0 cursor-pointer"
+              className="w-full px-2 py-1 text-xs rounded bg-blue-500 text-white hover:bg-blue-600 disabled:bg-muted-foreground/30 transition-colors"
               type="button"
             >
               Send

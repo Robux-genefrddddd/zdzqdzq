@@ -24,14 +24,30 @@ interface KeyboardCallbacks {
 }
 
 export function useKeyboardShortcuts(callbacks: KeyboardCallbacks) {
-  // Detect if user is typing in a text input
+  // Detect if user is typing in a text input or editable area
   const isTextInput = useCallback(() => {
     const activeElement = document.activeElement;
-    return (
+    if (!activeElement) return false;
+
+    // Check if it's an input, textarea, or contenteditable element
+    const isInputElement =
       activeElement instanceof HTMLInputElement ||
       activeElement instanceof HTMLTextAreaElement ||
-      (activeElement instanceof HTMLElement && activeElement.contentEditable === "true")
-    );
+      (activeElement instanceof HTMLElement && activeElement.contentEditable === "true");
+
+    if (isInputElement) return true;
+
+    // Also check if the active element is inside a sidebar or properties panel
+    // to prevent shortcuts from firing when editing properties
+    if (activeElement instanceof HTMLElement) {
+      const inSidebar = activeElement.closest(".w-72") !== null;
+      const inPropertiesPanel = activeElement.closest('[class*="properties"]') !== null;
+      const inPanel = activeElement.closest('[class*="panel"]') !== null;
+
+      return inSidebar || inPropertiesPanel || inPanel;
+    }
+
+    return false;
   }, []);
 
   // Determine if Ctrl or Meta based on OS

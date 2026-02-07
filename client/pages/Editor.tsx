@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { EditorLeftPanel } from "@/components/editor-left-panel";
 import { EditorPropertiesPanel } from "@/components/editor-properties-panel";
 import { EditorToolbar } from "@/components/editor-toolbar";
+import { EditorBottomPanel } from "@/components/editor-bottom-panel";
 import { Canvas } from "@/components/canvas";
 import { mockFiles, mockEditorFile } from "@shared/mock-data";
 import type { Layer } from "@shared/types";

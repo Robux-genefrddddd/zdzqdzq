@@ -246,9 +246,14 @@ export default function Editor() {
             activeShapeType={activeShapeType || activeTool}
             onSelectElement={handleSelectElement}
             onAddElement={handleAddElement}
+            onAddPath={handleAddPath}
             onUpdateElement={handleUpdateElement}
             onDeleteElement={handleDeleteElement}
             onDuplicateElement={handleDuplicateElement}
+            onPan={(dx, dy) => {
+              setPanX((prev) => prev + dx);
+              setPanY((prev) => prev + dy);
+            }}
           />
 
           {/* Bottom Panel */}

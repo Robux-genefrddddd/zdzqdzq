@@ -129,7 +129,12 @@ export function CanvasElement({
         style={{
           backgroundColor,
           borderRadius: `${borderRadius}px`,
-          border: style.stroke ? `${style.strokeWidth || 1}px solid ${style.stroke}` : "none",
+          border:
+            style.stroke
+              ? `${style.strokeWidth || 1}px solid ${style.stroke}`
+              : !style.fill && element.type !== "text"
+              ? "2px dashed #9ca3af"
+              : "none",
         }}
       >
         {/* Text Content */}

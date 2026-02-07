@@ -73,7 +73,15 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
   const { x, y, width, height, style = {} } = properties;
 
   return (
-    <div className="border-t border-border bg-background/50">
+    <div
+      className="border-t border-border bg-background/50 pointer-events-auto"
+      onMouseDown={(e) => {
+        e.stopPropagation();
+      }}
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+    >
       {/* Main Status Row */}
       <div className="px-6 py-3 flex items-center justify-between text-xs border-b border-border/50">
         <div className="flex items-center gap-8 flex-1">

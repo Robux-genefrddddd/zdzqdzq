@@ -189,12 +189,12 @@ export default function Editor() {
         selectedElement={selectedElement}
         onUpdate={(updates) => {
           if (selectedElement) {
-            canvasState.updateElement(selectedElement.id, updates);
+            handleUpdateElement(selectedElement.id, updates);
           }
         }}
         onDelete={() => {
           if (selectedElement) {
-            canvasState.deleteElement(selectedElement.id);
+            handleDeleteElement(selectedElement.id);
           }
         }}
       />

@@ -196,7 +196,19 @@ export default function Recents() {
                   className="w-full p-4 rounded-lg border border-border hover:border-foreground bg-secondary hover:bg-secondary/80 transition-all text-left flex items-center justify-between group"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="text-2xl">{file.thumbnail}</div>
+                    <div
+                      className="w-12 h-12 rounded-lg flex items-center justify-center text-xl flex-shrink-0"
+                      style={
+                        file.preview?.type === "color"
+                          ? { background: file.preview.content }
+                          : {
+                              background:
+                                "linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--background)) 100%)",
+                            }
+                      }
+                    >
+                      {!file.preview && file.thumbnail}
+                    </div>
                     <div>
                       <h3 className="text-sm font-medium text-foreground">
                         {file.title}

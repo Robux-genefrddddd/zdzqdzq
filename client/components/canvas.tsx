@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import { CanvasElement } from "./canvas-element";
-import { PathPreview } from "./canvas-path";
+import { PathPreview, CanvasPath } from "./canvas-path";
 import { Layer, PathPoint } from "@shared/types";
 import { useCanvasTool } from "@/hooks/useCanvasTool";
 

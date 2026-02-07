@@ -154,7 +154,9 @@ export default function Editor() {
       <EditorLeftPanel
         fileName={editorData.title}
         pages={editorData.pages}
-        layers={editorData.pages[0]?.layers || []}
+        layers={elements}
+        selectedElementId={selectedElementId}
+        onSelectElement={handleSelectElement}
       />
 
       {/* Canvas Center */}

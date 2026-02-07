@@ -215,7 +215,20 @@ export default function Editor() {
         </div>
 
         {/* Floating Toolbar */}
-        <EditorToolbar activeTool={activeTool} onToolChange={setActiveTool} />
+        <EditorToolbar
+          activeTool={activeTool}
+          activeShapeType={activeShapeType}
+          onToolChange={(tool) => {
+            // If it's a shape type (rectangle, circle, etc.), set activeShapeType
+            const shapeTypes = ["rectangle", "circle", "triangle", "polygon", "line"];
+            if (shapeTypes.includes(tool)) {
+              setActiveShapeType(tool);
+              setActiveTool("shape");
+            } else {
+              setActiveTool(tool);
+            }
+          }}
+        />
       </div>
 
       {/* Right Panel - Properties */}

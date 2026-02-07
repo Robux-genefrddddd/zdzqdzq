@@ -42,7 +42,7 @@ export default function Editor() {
           width: 200,
           height: 120,
           style: {
-            fill: null,
+            fill: "#ffffff",
             stroke: null,
             borderRadius: 8,
             fontSize: type === "text" ? 14 : undefined,

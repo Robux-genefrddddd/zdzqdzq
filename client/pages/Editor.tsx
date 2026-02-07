@@ -200,6 +200,8 @@ export default function Editor() {
             onSelectElement={handleSelectElement}
             onAddElement={handleAddElement}
             onUpdateElement={handleUpdateElement}
+            onDeleteElement={handleDeleteElement}
+            onDuplicateElement={handleDuplicateElement}
           />
         </div>
 

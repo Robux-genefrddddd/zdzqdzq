@@ -191,24 +191,83 @@ export function EditorPropertiesPanel({
 
         {/* Appearance */}
         <PropertySection title="Appearance" id="appearance">
-          <ColorInput
-            label="Fill"
-            value={style.fill}
-            onChange={(val) => onUpdate({ style: { fill: val } })}
-          />
-          <ColorInput
-            label="Stroke"
-            value={style.stroke}
-            onChange={(val) => onUpdate({ style: { stroke: val } })}
-          />
-          <PropertyInput
-            label="Stroke Width"
-            value={style.strokeWidth || 1}
-            onChange={(val) =>
-              onUpdate({ style: { strokeWidth: val } })
-            }
-            suffix="px"
-          />
+          {/* Fill Section */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-xs uppercase tracking-widest text-muted-foreground font-medium">
+                Fill
+              </label>
+              {style.fill ? (
+                <button
+                  onClick={() => onUpdate({ style: { fill: null } })}
+                  className="p-1 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                  title="Remove fill"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => onUpdate({ style: { fill: "#6366f1" } })}
+                  className="p-1 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                  title="Add fill"
+                >
+                  <Plus className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+            {style.fill && (
+              <ColorInput
+                label=""
+                value={style.fill}
+                onChange={(val) => onUpdate({ style: { fill: val } })}
+              />
+            )}
+          </div>
+
+          {/* Stroke Section */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-xs uppercase tracking-widest text-muted-foreground font-medium">
+                Stroke
+              </label>
+              {style.stroke ? (
+                <button
+                  onClick={() => onUpdate({ style: { stroke: null } })}
+                  className="p-1 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                  title="Remove stroke"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => onUpdate({ style: { stroke: "#000000" } })}
+                  className="p-1 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                  title="Add stroke"
+                >
+                  <Plus className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+            {style.stroke && (
+              <>
+                <ColorInput
+                  label=""
+                  value={style.stroke}
+                  onChange={(val) => onUpdate({ style: { stroke: val } })}
+                />
+                <PropertyInput
+                  label="Width"
+                  value={style.strokeWidth || 1}
+                  onChange={(val) =>
+                    onUpdate({ style: { strokeWidth: val } })
+                  }
+                  suffix="px"
+                />
+              </>
+            )}
+          </div>
+
+          {/* Radius */}
           <PropertyInput
             label="Radius"
             value={style.borderRadius || 0}
@@ -217,6 +276,8 @@ export function EditorPropertiesPanel({
             }
             suffix="px"
           />
+
+          {/* Opacity */}
           <div>
             <label className="text-xs uppercase tracking-widest text-muted-foreground font-medium mb-1 block">
               Opacity

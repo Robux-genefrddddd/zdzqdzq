@@ -54,7 +54,15 @@ export function Canvas({
     const x = (e.clientX - rect.left) / zoom - panX;
     const y = (e.clientY - rect.top) / zoom - panY;
 
-    // Visual feedback for element creation could be added here
+    // Show live preview while dragging
+    const width = Math.max(50, x - createStart.x);
+    const height = Math.max(50, y - createStart.y);
+    setPreviewRect({
+      x: createStart.x,
+      y: createStart.y,
+      width,
+      height,
+    });
   };
 
   const handleCanvasMouseUp = (e: React.MouseEvent) => {

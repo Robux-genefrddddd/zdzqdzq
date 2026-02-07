@@ -1,28 +1,33 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { CanvasElement } from "./canvas-element";
-import { useCanvasState } from "@/hooks/useCanvasState";
 import { Layer } from "@shared/types";
 
 interface CanvasProps {
-  initialLayers?: Layer[];
+  elements: Layer[];
+  selectedElementId: string | null;
+  zoom: number;
+  panX: number;
+  panY: number;
   activeTool?: string;
-  onStateChange?: (state: any) => void;
+  onSelectElement: (id: string | null) => void;
+  onAddElement: (type: string, x: number, y: number) => string;
+  onUpdateElement: (id: string, updates: any) => void;
 }
 
 export function Canvas({
-  initialLayers = [],
+  elements,
+  selectedElementId,
+  zoom,
+  panX,
+  panY,
   activeTool = "select",
-  onStateChange,
+  onSelectElement,
+  onAddElement,
+  onUpdateElement,
 }: CanvasProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const [isCanvasCreating, setIsCanvasCreating] = useState(false);
   const [createStart, setCreateStart] = useState({ x: 0, y: 0 });
-
-  const canvasState = useCanvasState(initialLayers);
-
-  useEffect(() => {
-    onStateChange?.(canvasState);
-  }, [canvasState, onStateChange]);
 
   const handleCanvasMouseDown = (e: React.MouseEvent) => {
     if (activeTool === "select") return;

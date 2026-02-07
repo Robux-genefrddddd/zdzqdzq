@@ -138,11 +138,15 @@ export function useCanvasTool(
           break;
 
         case "pencil":
-          // Continuous drawing while dragging
-          setState((prev) => ({
-            ...prev,
-            pathPoints: [...prev.pathPoints, { x, y }],
-          }));
+          // Continuous drawing while dragging - sample points for performance
+          if (state.pathPoints.length === 0 ||
+              Math.hypot(x - state.pathPoints[state.pathPoints.length - 1].x,
+                         y - state.pathPoints[state.pathPoints.length - 1].y) > 3) {
+            setState((prev) => ({
+              ...prev,
+              pathPoints: [...prev.pathPoints, { x, y }],
+            }));
+          }
           break;
 
         case "rectangle":

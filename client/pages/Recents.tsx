@@ -83,28 +83,33 @@ export default function Recents() {
 
               {/* Filters & View Mode */}
               <div className="flex items-center gap-3">
-                <div className="flex gap-2">
-                  <button className="relative px-3 py-1.5 rounded-lg bg-secondary text-sm text-foreground hover:bg-secondary/80 transition-colors flex items-center gap-2">
+                <div className="relative">
+                  <button
+                    onClick={() => setShowOrgDropdown(!showOrgDropdown)}
+                    className="px-3 py-1.5 rounded-lg bg-secondary text-sm text-foreground hover:bg-secondary/80 transition-colors flex items-center gap-2"
+                  >
                     Organization
                     <ChevronDown className="w-4 h-4" />
-                    <div className="absolute top-full left-0 mt-1 w-48 rounded-lg bg-card border border-border shadow-soft hidden group-hover:block">
-                      <button
-                        onClick={() => setSelectedOrg("all")}
-                        className="block w-full text-left px-4 py-2 text-sm hover:bg-secondary"
+                  </button>
+                  {showOrgDropdown && (
+                    <div className="absolute top-full left-0 mt-1 w-48 rounded-lg bg-card border border-border shadow-soft z-10">
+                      <div
+                        onClick={() => { setSelectedOrg("all"); setShowOrgDropdown(false); }}
+                        className="block w-full text-left px-4 py-2 text-sm hover:bg-secondary cursor-pointer"
                       >
                         All Organizations
-                      </button>
+                      </div>
                       {mockOrganizations.map(org => (
-                        <button
+                        <div
                           key={org.id}
-                          onClick={() => setSelectedOrg(org.name)}
-                          className="block w-full text-left px-4 py-2 text-sm hover:bg-secondary"
+                          onClick={() => { setSelectedOrg(org.name); setShowOrgDropdown(false); }}
+                          className="block w-full text-left px-4 py-2 text-sm hover:bg-secondary cursor-pointer"
                         >
                           {org.icon} {org.name}
-                        </button>
+                        </div>
                       ))}
                     </div>
-                  </button>
+                  )}
                 </div>
 
                 <div className="flex gap-1 border border-border rounded-lg p-1">

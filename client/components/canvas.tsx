@@ -34,8 +34,8 @@ export function Canvas({
     if (!canvasRef.current) return;
 
     const rect = canvasRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / canvasState.zoom - canvasState.panX;
-    const y = (e.clientY - rect.top) / canvasState.zoom - canvasState.panY;
+    const x = (e.clientX - rect.left) / zoom - panX;
+    const y = (e.clientY - rect.top) / zoom - panY;
 
     setIsCanvasCreating(true);
     setCreateStart({ x, y });
@@ -45,8 +45,8 @@ export function Canvas({
     if (!isCanvasCreating || !canvasRef.current) return;
 
     const rect = canvasRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / canvasState.zoom - canvasState.panX;
-    const y = (e.clientY - rect.top) / canvasState.zoom - canvasState.panY;
+    const x = (e.clientX - rect.left) / zoom - panX;
+    const y = (e.clientY - rect.top) / zoom - panY;
 
     // Visual feedback for element creation could be added here
   };
@@ -55,17 +55,17 @@ export function Canvas({
     if (!isCanvasCreating || !canvasRef.current) return;
 
     const rect = canvasRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / canvasState.zoom - canvasState.panX;
-    const y = (e.clientY - rect.top) / canvasState.zoom - canvasState.panY;
+    const x = (e.clientX - rect.left) / zoom - panX;
+    const y = (e.clientY - rect.top) / zoom - panY;
 
     // Don't create if barely dragged
     if (Math.abs(x - createStart.x) < 10 && Math.abs(y - createStart.y) < 10) {
-      canvasState.addElement(activeTool as any, createStart.x, createStart.y);
+      onAddElement(activeTool, createStart.x, createStart.y);
     } else {
       const width = Math.max(50, x - createStart.x);
       const height = Math.max(50, y - createStart.y);
-      const id = canvasState.addElement(activeTool as any, createStart.x, createStart.y);
-      canvasState.updateElement(id, { width, height });
+      const id = onAddElement(activeTool, createStart.x, createStart.y);
+      onUpdateElement(id, { width, height });
     }
 
     setIsCanvasCreating(false);
@@ -74,7 +74,7 @@ export function Canvas({
   const handleCanvasClick = (e: React.MouseEvent) => {
     // Deselect when clicking empty canvas
     if (e.target === canvasRef.current) {
-      canvasState.selectElement(null);
+      onSelectElement(null);
     }
   };
 

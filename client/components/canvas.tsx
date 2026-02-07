@@ -12,6 +12,8 @@ interface CanvasProps {
   onSelectElement: (id: string | null) => void;
   onAddElement: (type: string, x: number, y: number) => string;
   onUpdateElement: (id: string, updates: any) => void;
+  onDeleteElement?: (id: string) => void;
+  onDuplicateElement?: (id: string) => void;
 }
 
 export function Canvas({

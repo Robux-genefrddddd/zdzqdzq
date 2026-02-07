@@ -54,6 +54,7 @@ export interface LayerProperties {
   height: number;
   style: LayerStyle;
   content?: string; // For text elements
+  shapeType?: "rectangle" | "circle" | "triangle" | "polygon" | "line"; // For shape elements
 }
 
 export interface Layer {

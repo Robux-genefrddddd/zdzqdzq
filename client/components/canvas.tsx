@@ -83,6 +83,7 @@ export function Canvas({
     }
 
     setIsCanvasCreating(false);
+    setPreviewRect(null);
   };
 
   const handleCanvasClick = (e: React.MouseEvent) => {

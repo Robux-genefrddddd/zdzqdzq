@@ -177,7 +177,15 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
 
       {/* Comments Section */}
       {showComments && (
-        <div className="px-6 py-3 border-t border-border/50 bg-secondary/20 space-y-3">
+        <div
+          className="px-6 py-3 border-t border-border/50 bg-secondary/20 space-y-3 pointer-events-auto"
+          onMouseDown={(e) => {
+            e.stopPropagation();
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
           <div className="flex items-center gap-2 mb-2">
             <MessageCircle size={14} className="text-muted-foreground" />
             <span className="text-xs font-medium text-foreground">Comments ({comments.length})</span>
@@ -190,6 +198,9 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
                 <div
                   key={comment.id}
                   className="flex items-start gap-2 p-2 bg-background rounded border border-border/50 text-xs"
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                  }}
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
@@ -204,9 +215,14 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
                     <p className="text-foreground/80 mt-1">{comment.text}</p>
                   </div>
                   <button
-                    onClick={() => handleDeleteComment(comment.id)}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    onClick={(e) => handleDeleteComment(comment.id, e)}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    className="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
                     title="Delete comment"
+                    type="button"
                   >
                     ✕
                   </button>
@@ -216,23 +232,42 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
           )}
 
           {/* Add Comment Form */}
-          <div className="flex items-center gap-2">
+          <div
+            className="flex items-center gap-2"
+            onMouseDown={(e) => {
+              e.stopPropagation();
+            }}
+          >
             <input
               type="text"
               placeholder="Add a comment..."
               value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
+              onChange={(e) => {
+                e.stopPropagation();
+                setNewComment(e.target.value);
+              }}
               onKeyPress={(e) => {
                 if (e.key === "Enter") {
-                  handleAddComment();
+                  handleAddComment(e as any);
                 }
+              }}
+              onMouseDown={(e) => {
+                e.stopPropagation();
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
               }}
               className="flex-1 px-2 py-1 text-xs rounded border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
             <button
-              onClick={handleAddComment}
+              onClick={(e) => handleAddComment(e)}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
               disabled={!newComment.trim()}
-              className="px-2 py-1 text-xs rounded bg-blue-500 text-white hover:bg-blue-600 disabled:bg-muted-foreground/50 disabled:cursor-not-allowed transition-colors"
+              className="px-2 py-1 text-xs rounded bg-blue-500 text-white hover:bg-blue-600 disabled:bg-muted-foreground/50 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+              type="button"
             >
               Send
             </button>

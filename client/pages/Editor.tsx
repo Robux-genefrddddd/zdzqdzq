@@ -209,6 +209,7 @@ export default function Editor() {
             panX={panX}
             panY={panY}
             activeTool={activeTool}
+            activeShapeType={activeShapeType}
             onSelectElement={handleSelectElement}
             onAddElement={handleAddElement}
             onUpdateElement={handleUpdateElement}

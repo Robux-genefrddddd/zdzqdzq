@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { Layer } from "@shared/types";
 import { cn } from "@/lib/utils";
 import { ElementContextMenu } from "./element-context-menu";
+import { CanvasPath } from "./canvas-path";
 
 interface CanvasElementProps {
   element: Layer;

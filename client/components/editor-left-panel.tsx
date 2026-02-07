@@ -1,21 +1,30 @@
-import { Plus, ChevronDown, File, Layers } from "lucide-react";
+import { Plus, ChevronDown, File, Layers, Eye, EyeOff, Lock, Unlock } from "lucide-react";
 import { useState } from "react";
+import { Layer } from "@shared/types";
 
 interface EditorLeftPanelProps {
   fileName: string;
   pages: Array<{ id: string; name: string }>;
-  layers: Array<{ id: string; name: string; type: string }>;
+  layers: Layer[];
+  selectedElementId?: string | null;
+  onSelectElement?: (id: string) => void;
 }
 
 export function EditorLeftPanel({
   fileName,
   pages,
   layers,
+  selectedElementId,
+  onSelectElement,
 }: EditorLeftPanelProps) {
   const [activeTab, setActiveTab] = useState<"layers" | "assets">("layers");
   const [expandedPages, setExpandedPages] = useState<Set<string>>(
     new Set(pages.map((p) => p.id)),
   );
+  const [visibleLayers, setVisibleLayers] = useState<Set<string>>(
+    new Set(layers.map((l) => l.id)),
+  );
+  const [lockedLayers, setLockedLayers] = useState<Set<string>>(new Set());
 
   return (
     <div className="w-72 border-r border-border bg-background flex flex-col h-screen">

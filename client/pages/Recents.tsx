@@ -161,8 +161,18 @@ export default function Recents() {
                   className="group rounded-xl overflow-hidden border border-border hover:border-foreground bg-secondary hover:bg-secondary/80 transition-all duration-300 hover:shadow-soft-lg"
                 >
                   {/* Thumbnail */}
-                  <div className="aspect-video bg-gradient-to-br from-secondary to-background flex items-center justify-center text-5xl group-hover:scale-105 transition-transform">
-                    {file.thumbnail}
+                  <div
+                    className="aspect-video flex items-center justify-center text-5xl group-hover:scale-105 transition-transform"
+                    style={
+                      file.preview?.type === "color"
+                        ? { background: file.preview.content }
+                        : {
+                            background:
+                              "linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--background)) 100%)",
+                          }
+                    }
+                  >
+                    {!file.preview && file.thumbnail}
                   </div>
 
                   {/* Info */}

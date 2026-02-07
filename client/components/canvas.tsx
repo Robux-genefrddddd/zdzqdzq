@@ -56,6 +56,11 @@ export function Canvas({
   // Canvas event handlers
   const handleCanvasMouseDown = (e: React.MouseEvent) => {
     if (!canvasRef.current) return;
+    // Only process if the event target is the canvas itself (not elements inside it)
+    if (e.target !== canvasRef.current && !(e.target as HTMLElement).closest('[data-canvas-element]')) {
+      return;
+    }
+
     const rect = canvasRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;

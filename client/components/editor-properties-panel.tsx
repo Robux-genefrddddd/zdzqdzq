@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, Trash2, Copy } from "lucide-react";
+import { ChevronDown, Trash2, Copy, Plus, X } from "lucide-react";
 import { Layer } from "@shared/types";
 
 interface EditorPropertiesPanelProps {

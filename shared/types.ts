@@ -1,7 +1,13 @@
+export interface PreviewContent {
+  type: "color" | "image" | "component";
+  content: string;
+}
+
 export interface FileItem {
   id: string;
   title: string;
   thumbnail: string;
+  preview?: PreviewContent;
   lastEdited: Date;
   organization: string;
   type: "file" | "project";

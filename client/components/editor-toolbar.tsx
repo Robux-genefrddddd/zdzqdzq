@@ -7,7 +7,18 @@ import {
   Image,
   Hand,
   Zap,
+  Triangle,
+  ChevronDown,
 } from "lucide-react";
+import { useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type ToolType =
   | "select"

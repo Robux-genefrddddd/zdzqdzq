@@ -224,17 +224,27 @@ export default function Editor() {
         {/* Floating Toolbar */}
         <EditorToolbar
           activeTool={activeTool}
-          activeShapeType={activeShapeType}
           onToolChange={(tool) => {
             // If it's a shape type (rectangle, circle, etc.), set activeShapeType
-            const shapeTypes = ["rectangle", "circle", "triangle", "polygon", "line"];
+            const shapeTypes = ["rectangle", "circle", "triangle", "polygon", "line", "arrow", "star"];
             if (shapeTypes.includes(tool)) {
               setActiveShapeType(tool);
-              setActiveTool("shape");
+              setActiveTool(tool);
             } else {
               setActiveTool(tool);
             }
           }}
+          onZoom={(direction) => {
+            if (typeof direction === "number") {
+              setZoom(direction / 100);
+            } else if (direction === "in") {
+              setZoom((prev) => Math.min(prev * 1.2, 5));
+            } else if (direction === "out") {
+              setZoom((prev) => Math.max(prev / 1.2, 0.1));
+            }
+            // fit/fill would need canvas calculation, skip for now
+          }}
+          zoomLevel={Math.round(zoom * 100)}
         />
       </div>
 

@@ -136,8 +136,11 @@ export function Canvas({
     const x = (e.clientX - rect.left) / zoom - panX;
     const y = (e.clientY - rect.top) / zoom - panY;
 
+    // Shape types that need shapeType parameter
+    const shapeTypes = ["rectangle", "circle", "triangle", "polygon", "line", "arrow", "star"];
+    const shapeTypeParam = shapeTypes.includes(activeTool) ? activeTool : undefined;
+
     // Don't create if barely dragged
-    const shapeTypeParam = activeTool === "shape" ? activeShapeType : undefined;
     if (Math.abs(x - createStart.x) < 10 && Math.abs(y - createStart.y) < 10) {
       onAddElement(activeTool, createStart.x, createStart.y, shapeTypeParam);
     } else {

@@ -164,7 +164,7 @@ export function EditorToolbar({
                 title="Shape (U)"
                 aria-label="Shape tools"
               >
-                <Rectangle size={18} />
+                <Square size={18} />
                 <ChevronDown size={12} className="absolute bottom-0 right-0" />
               </button>
             </DropdownMenuTrigger>

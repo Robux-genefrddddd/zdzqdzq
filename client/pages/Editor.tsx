@@ -190,7 +190,7 @@ export default function Editor() {
         </div>
 
         {/* Canvas Area */}
-        <div className="flex-1 relative overflow-auto">
+        <div className="flex-1 relative overflow-auto flex flex-col">
           <Canvas
             elements={elements}
             selectedElementId={selectedElementId}
@@ -204,6 +204,9 @@ export default function Editor() {
             onDeleteElement={handleDeleteElement}
             onDuplicateElement={handleDuplicateElement}
           />
+
+          {/* Bottom Panel */}
+          <EditorBottomPanel selectedElement={selectedElement} elementsCount={elements.length} />
         </div>
 
         {/* Floating Toolbar */}

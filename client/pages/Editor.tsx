@@ -53,7 +53,7 @@ export default function Editor() {
           width: 200,
           height: 120,
           style: {
-            fill: "#ffffff",
+            fill: null,
             stroke: null,
             borderRadius: shapeType === "circle" ? 100 : 8,
             fontSize: type === "text" ? 14 : undefined,
@@ -64,11 +64,19 @@ export default function Editor() {
         },
       };
 
-      setElements((prev) => [...prev, newElement]);
+      setElements((prev) => {
+        const newElements = [...prev, newElement];
+        // Update history when element is added
+        const newHistory = history.slice(0, historyIndex + 1);
+        newHistory.push(newElements);
+        setHistory(newHistory);
+        setHistoryIndex(newHistory.length - 1);
+        return newElements;
+      });
       setSelectedElementId(newElement.id);
       return newElement.id;
     },
-    [elements.length],
+    [elements.length, history, historyIndex],
   );
 
   const handleUpdateElement = useCallback(

@@ -44,11 +44,17 @@ export function CanvasElement({
       return;
     }
 
+    e.stopPropagation();
     setIsDragging(true);
     setDragStart({
       x: e.clientX - x * zoom,
       y: e.clientY - y * zoom,
     });
+    onSelect();
+  };
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     onSelect();
   };
 

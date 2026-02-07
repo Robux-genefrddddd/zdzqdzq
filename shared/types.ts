@@ -37,8 +37,8 @@ export interface Page {
 }
 
 export interface LayerStyle {
-  fill?: string;
-  stroke?: string;
+  fill?: string | null;
+  stroke?: string | null;
   strokeWidth?: number;
   borderRadius?: number;
   fontSize?: number;

@@ -140,18 +140,41 @@ export function Canvas({
             </div>
           </div>
         ) : (
-          elements.map((element) => (
-            <CanvasElement
-              key={element.id}
-              element={element}
-              isSelected={selectedElementId === element.id}
-              onSelect={() => onSelectElement(element.id)}
-              onUpdate={(updates) => onUpdateElement(element.id, updates)}
-              onDelete={() => onDeleteElement?.(element.id)}
-              onDuplicate={() => onDuplicateElement?.(element.id)}
-              zoom={zoom}
-            />
-          ))
+          <>
+            {elements.map((element) =>
+              element.type === "path" && element.properties && "path" in element.properties ? (
+                <div
+                  key={element.id}
+                  className="absolute"
+                  style={{
+                    left: `${element.properties.x}px`,
+                    top: `${element.properties.y}px`,
+                    width: `${element.properties.width}px`,
+                    height: `${element.properties.height}px`,
+                    cursor: "grab",
+                    outline: selectedElementId === element.id ? "2px solid #3b82f6" : "none",
+                  }}
+                  onClick={() => onSelectElement(element.id)}
+                >
+                  <CanvasPath
+                    path={(element.properties as any).path}
+                    isSelected={selectedElementId === element.id}
+                  />
+                </div>
+              ) : (
+                <CanvasElement
+                  key={element.id}
+                  element={element}
+                  isSelected={selectedElementId === element.id}
+                  onSelect={() => onSelectElement(element.id)}
+                  onUpdate={(updates) => onUpdateElement(element.id, updates)}
+                  onDelete={() => onDeleteElement?.(element.id)}
+                  onDuplicate={() => onDuplicateElement?.(element.id)}
+                  zoom={zoom}
+                />
+              )
+            )}
+          </>
         )}
 
         {/* Preview Rectangle (for shapes/frames being dragged) */}

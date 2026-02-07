@@ -128,9 +128,14 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
           {/* Quick Actions */}
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setShowComments(!showComments)}
-              className="p-1 rounded hover:bg-foreground/10 transition-colors text-muted-foreground hover:text-foreground"
+              onClick={handleToggleComments}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              className="p-1 rounded hover:bg-foreground/10 transition-colors text-muted-foreground hover:text-foreground pointer-events-auto"
               title={`Comments (${comments.length})`}
+              type="button"
             >
               <MessageCircle size={14} />
               {comments.length > 0 && (
@@ -138,14 +143,24 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
               )}
             </button>
             <button
-              className="p-1 rounded hover:bg-foreground/10 transition-colors text-muted-foreground hover:text-foreground"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              className="p-1 rounded hover:bg-foreground/10 transition-colors text-muted-foreground hover:text-foreground pointer-events-auto"
               title="Visibility"
+              type="button"
             >
               <Eye size={14} />
             </button>
             <button
-              className="p-1 rounded hover:bg-foreground/10 transition-colors text-muted-foreground hover:text-foreground"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              className="p-1 rounded hover:bg-foreground/10 transition-colors text-muted-foreground hover:text-foreground pointer-events-auto"
               title="Lock"
+              type="button"
             >
               <Lock size={14} />
             </button>

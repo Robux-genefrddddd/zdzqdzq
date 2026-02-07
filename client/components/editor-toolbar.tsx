@@ -101,7 +101,7 @@ export function EditorToolbar({
   };
 
   const shapes = [
-    { id: "rectangle", label: "Rectangle", icon: Rectangle, shortcut: "R" },
+    { id: "rectangle", label: "Rectangle", icon: Square, shortcut: "R" },
     { id: "line", label: "Line", icon: Minus, shortcut: "L" },
     { id: "arrow", label: "Arrow", icon: ArrowRight, shortcut: null },
     { id: "circle", label: "Ellipse", icon: Circle, shortcut: "O" },

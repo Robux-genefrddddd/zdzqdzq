@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  MousePointer2,
   Square,
   Circle,
   Triangle,

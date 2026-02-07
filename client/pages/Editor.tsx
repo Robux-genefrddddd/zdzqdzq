@@ -42,11 +42,12 @@ export default function Editor() {
           width: 200,
           height: 120,
           style: {
-            fill: undefined,
-            stroke: undefined,
+            fill: null,
+            stroke: null,
             borderRadius: 8,
             fontSize: type === "text" ? 14 : undefined,
             fontWeight: type === "text" ? "500" : undefined,
+            opacity: 1,
           },
         },
       };

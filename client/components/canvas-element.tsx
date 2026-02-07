@@ -150,7 +150,7 @@ export function CanvasElement({
             style={{
               fontSize: `${style.fontSize || 14}px`,
               fontWeight: style.fontWeight || "400",
-              color: style.fill ? "#f3f4f6" : "#6b7280",
+              color: style.fill && style.fill !== null ? "#f3f4f6" : "#6b7280",
               textAlign: (style.textAlign as any) || "center",
               whiteSpace: "pre-wrap",
               wordBreak: "break-word",

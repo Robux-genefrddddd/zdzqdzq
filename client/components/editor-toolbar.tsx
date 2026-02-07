@@ -32,10 +32,11 @@ type ToolType =
 
 interface EditorToolbarProps {
   activeTool?: string;
-  onToolChange?: (tool: ToolType) => void;
+  activeShapeType?: string;
+  onToolChange?: (tool: ToolType | string) => void;
 }
 
-export function EditorToolbar({ activeTool = "select", onToolChange }: EditorToolbarProps) {
+export function EditorToolbar({ activeTool = "select", activeShapeType = "rectangle", onToolChange }: EditorToolbarProps) {
   const [showShapes, setShowShapes] = useState(false);
 
   const shapes = [

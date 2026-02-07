@@ -99,7 +99,7 @@ export function CanvasElement({
   }, [isDragging, isResizing, dragStart, resizeStart, onUpdate, zoom]);
 
   const borderRadius = style.borderRadius || 0;
-  const backgroundColor = style.fill || "#f3f4f6";
+  const backgroundColor = style.fill || "transparent";
   const opacity = style.opacity ?? 1;
 
   return (

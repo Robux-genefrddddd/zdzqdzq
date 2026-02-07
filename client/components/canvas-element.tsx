@@ -22,6 +22,8 @@ export function CanvasElement({
   isSelected,
   onSelect,
   onUpdate,
+  onDelete,
+  onDuplicate,
   zoom,
 }: CanvasElementProps) {
   const elementRef = useRef<HTMLDivElement>(null);

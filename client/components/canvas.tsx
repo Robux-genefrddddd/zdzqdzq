@@ -63,8 +63,9 @@ export function Canvas({
       return;
     }
 
-    // Element creation mode
-    if (activeTool === "select") return;
+    // No creation in select, hand, comment, resources, or play mode
+    const noCreationTools = ["select", "hand", "comment", "resources", "play"];
+    if (noCreationTools.includes(activeTool)) return;
 
     setIsCanvasCreating(true);
     setCreateStart({ x, y });

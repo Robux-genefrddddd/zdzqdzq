@@ -35,7 +35,16 @@ export function useKeyboardShortcuts(callbacks: KeyboardCallbacks) {
   }, []);
 
   // Determine if Ctrl or Meta based on OS
-  const isMac = useCallback(() => navigator.platform.toUpperCase().indexOf("MAC") >= 0, []);
+  const isMac = useCallback(() => {
+    try {
+      return (
+        navigator.platform.toUpperCase().indexOf("MAC") >= 0 ||
+        navigator.userAgent.toUpperCase().indexOf("MAC") >= 0
+      );
+    } catch {
+      return false;
+    }
+  }, []);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {

@@ -146,18 +146,36 @@ export const mockEditorFile: EditorFile = {
           id: "layer1",
           name: "Frame",
           type: "frame",
-          children: [
-            {
-              id: "layer2",
-              name: "Title",
-              type: "text",
+          properties: {
+            x: 100,
+            y: 100,
+            width: 400,
+            height: 300,
+            style: {
+              fill: "#ffffff",
+              borderRadius: 12,
+              stroke: "#e5e7eb",
+              strokeWidth: 1,
             },
-            {
-              id: "layer3",
-              name: "Button",
-              type: "shape",
+          },
+        },
+        {
+          id: "layer2",
+          name: "Title",
+          type: "text",
+          properties: {
+            x: 120,
+            y: 120,
+            width: 360,
+            height: 40,
+            content: "Welcome to Editor",
+            style: {
+              fill: "#1f2937",
+              fontSize: 24,
+              fontWeight: "600",
+              textAlign: "left",
             },
-          ],
+          },
         },
       ],
     },

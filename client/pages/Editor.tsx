@@ -163,39 +163,50 @@ export default function Editor() {
     [history, historyIndex]
   );
 
-  const handleAddPath = useCallback((points: PathPoint[], isClosed: boolean) => {
-    const minX = Math.min(...points.map((p) => p.x));
-    const minY = Math.min(...points.map((p) => p.y));
-    const maxX = Math.max(...points.map((p) => p.x));
-    const maxY = Math.max(...points.map((p) => p.y));
+  const handleAddPath = useCallback(
+    (points: PathPoint[], isClosed: boolean) => {
+      const minX = Math.min(...points.map((p) => p.x));
+      const minY = Math.min(...points.map((p) => p.y));
+      const maxX = Math.max(...points.map((p) => p.x));
+      const maxY = Math.max(...points.map((p) => p.y));
 
-    const newElement: Layer = {
-      id: `layer-${Date.now()}`,
-      name: `Path ${elements.length + 1}`,
-      type: "path",
-      properties: {
-        x: minX,
-        y: minY,
-        width: maxX - minX,
-        height: maxY - minY,
-        style: {
-          fill: null,
-          stroke: "#000000",
-          strokeWidth: 2,
-          opacity: 1,
+      const newElement: Layer = {
+        id: `layer-${Date.now()}`,
+        name: `Path ${elements.length + 1}`,
+        type: "path",
+        properties: {
+          x: minX,
+          y: minY,
+          width: maxX - minX,
+          height: maxY - minY,
+          style: {
+            fill: null,
+            stroke: "#000000",
+            strokeWidth: 2,
+            opacity: 1,
+          },
+          path: {
+            points: points.map((p) => ({ x: p.x - minX, y: p.y - minY })),
+            closed: isClosed,
+            stroke: "#000000",
+            strokeWidth: 2,
+          },
         },
-        path: {
-          points: points.map((p) => ({ x: p.x - minX, y: p.y - minY })),
-          closed: isClosed,
-          stroke: "#000000",
-          strokeWidth: 2,
-        },
-      },
-    };
+      };
 
-    setElements((prev) => [...prev, newElement]);
-    setSelectedElementId(newElement.id);
-  }, [elements.length]);
+      setElements((prev) => {
+        const newElements = [...prev, newElement];
+        // Update history when path is added
+        const newHistory = history.slice(0, historyIndex + 1);
+        newHistory.push(newElements);
+        setHistory(newHistory);
+        setHistoryIndex(newHistory.length - 1);
+        return newElements;
+      });
+      setSelectedElementId(newElement.id);
+    },
+    [elements.length, history, historyIndex]
+  );
 
   // Undo/Redo functionality
   const handleUndo = useCallback(() => {

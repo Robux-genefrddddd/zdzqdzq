@@ -64,10 +64,7 @@ export function CanvasElement({
     onSelect();
   };
 
-  const handleResizeStart = (
-    e: React.MouseEvent,
-    handle: string,
-  ) => {
+  const handleResizeStart = (e: React.MouseEvent, handle: string) => {
     e.preventDefault();
     e.stopPropagation();
     setIsResizing(true);
@@ -92,7 +89,10 @@ export function CanvasElement({
         const deltaY = (e.clientY - resizeStart.y) / zoom;
         const newWidth = Math.max(50, resizeStart.width + deltaX);
         const newHeight = Math.max(50, resizeStart.height + deltaY);
-        onUpdate({ width: Math.round(newWidth), height: Math.round(newHeight) });
+        onUpdate({
+          width: Math.round(newWidth),
+          height: Math.round(newHeight),
+        });
       }
     };
 
@@ -145,8 +145,8 @@ export function CanvasElement({
             style.stroke && style.stroke !== null
               ? `${style.strokeWidth || 1}px solid ${style.stroke}`
               : !style.fill && element.type !== "text"
-              ? "2px dashed #9ca3af"
-              : "none",
+                ? "2px dashed #9ca3af"
+                : "none",
         }}
       >
         {/* Text Content */}
@@ -193,10 +193,34 @@ export function CanvasElement({
 
           {/* Edge Resize Handles */}
           {[
-            { pos: "n", cursor: "ns-resize", top: "-4px", left: "50%", translate: "-50% 0" },
-            { pos: "s", cursor: "ns-resize", bottom: "-4px", left: "50%", translate: "-50% 0" },
-            { pos: "e", cursor: "ew-resize", right: "-4px", top: "50%", translate: "0 -50%" },
-            { pos: "w", cursor: "ew-resize", left: "-4px", top: "50%", translate: "0 -50%" },
+            {
+              pos: "n",
+              cursor: "ns-resize",
+              top: "-4px",
+              left: "50%",
+              translate: "-50% 0",
+            },
+            {
+              pos: "s",
+              cursor: "ns-resize",
+              bottom: "-4px",
+              left: "50%",
+              translate: "-50% 0",
+            },
+            {
+              pos: "e",
+              cursor: "ew-resize",
+              right: "-4px",
+              top: "50%",
+              translate: "0 -50%",
+            },
+            {
+              pos: "w",
+              cursor: "ew-resize",
+              left: "-4px",
+              top: "50%",
+              translate: "0 -50%",
+            },
           ].map((handle) => (
             <div
               key={handle.pos}

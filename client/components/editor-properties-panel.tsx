@@ -13,9 +13,9 @@ export function EditorPropertiesPanel({
   onUpdate,
   onDelete,
 }: EditorPropertiesPanelProps) {
-  const [expandedSections, setExpandedSections] = useState<
-    Set<string>
-  >(new Set(["position", "appearance", "text"]));
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(
+    new Set(["position", "appearance", "text"]),
+  );
 
   const toggleSection = (section: string) => {
     const newSet = new Set(expandedSections);
@@ -104,7 +104,9 @@ export function EditorPropertiesPanel({
             onChange={handleChange}
             className="flex-1 px-2 py-1 rounded bg-background border border-border text-sm text-foreground"
           />
-          {suffix && <span className="text-xs text-muted-foreground">{suffix}</span>}
+          {suffix && (
+            <span className="text-xs text-muted-foreground">{suffix}</span>
+          )}
         </div>
       </div>
     );
@@ -272,9 +274,7 @@ export function EditorPropertiesPanel({
                 <PropertyInput
                   label="Width"
                   value={style.strokeWidth || 1}
-                  onChange={(val) =>
-                    onUpdate({ style: { strokeWidth: val } })
-                  }
+                  onChange={(val) => onUpdate({ style: { strokeWidth: val } })}
                   suffix="px"
                 />
               </>
@@ -285,9 +285,7 @@ export function EditorPropertiesPanel({
           <PropertyInput
             label="Radius"
             value={style.borderRadius || 0}
-            onChange={(val) =>
-              onUpdate({ style: { borderRadius: val } })
-            }
+            onChange={(val) => onUpdate({ style: { borderRadius: val } })}
             suffix="px"
           />
 

@@ -3,7 +3,7 @@ import { useEffect, useCallback } from "react";
 interface KeyboardCallbacks {
   // Tool shortcuts
   onSelectTool: (tool: string) => void;
-  
+
   // Canvas actions
   onDelete: () => void;
   onSelectAll: () => void;
@@ -12,13 +12,13 @@ interface KeyboardCallbacks {
   onUngroup: () => void;
   onUndo: () => void;
   onRedo: () => void;
-  
+
   // Zoom/View actions
   onZoom: (action: "in" | "out" | "reset" | "fit") => void;
-  
+
   // Hand tool temporary activation
   onTemporaryHandTool: (active: boolean) => void;
-  
+
   // Pan tool
   onEscapeAction: () => void;
 }
@@ -33,16 +33,19 @@ export function useKeyboardShortcuts(callbacks: KeyboardCallbacks) {
     const isInputElement =
       activeElement instanceof HTMLInputElement ||
       activeElement instanceof HTMLTextAreaElement ||
-      (activeElement instanceof HTMLElement && activeElement.contentEditable === "true");
+      (activeElement instanceof HTMLElement &&
+        activeElement.contentEditable === "true");
 
     if (isInputElement) return true;
 
     // Also check if the active element is inside an editor panel or sidebar
     // to prevent shortcuts from firing when editing properties/values
     if (activeElement instanceof HTMLElement) {
-      const inPropertiesPanel = activeElement.closest(".editor-properties-panel") !== null;
+      const inPropertiesPanel =
+        activeElement.closest(".editor-properties-panel") !== null;
       const inLeftPanel = activeElement.closest(".editor-left-panel") !== null;
-      const inBottomPanel = activeElement.closest(".editor-bottom-panel") !== null;
+      const inBottomPanel =
+        activeElement.closest(".editor-bottom-panel") !== null;
 
       return inPropertiesPanel || inLeftPanel || inBottomPanel;
     }
@@ -207,7 +210,7 @@ export function useKeyboardShortcuts(callbacks: KeyboardCallbacks) {
         callbacks.onEscapeAction();
       }
     },
-    [isTextInput, isMac, callbacks]
+    [isTextInput, isMac, callbacks],
   );
 
   const handleKeyUp = useCallback(
@@ -218,7 +221,7 @@ export function useKeyboardShortcuts(callbacks: KeyboardCallbacks) {
         callbacks.onTemporaryHandTool(false);
       }
     },
-    [callbacks]
+    [callbacks],
   );
 
   useEffect(() => {

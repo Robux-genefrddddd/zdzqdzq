@@ -21,17 +21,19 @@ export interface CanvasToolHandlers {
 }
 
 interface ToolCallbacks {
-  onAddElement: (type: string, x: number, y: number, shapeType?: string) => void;
+  onAddElement: (
+    type: string,
+    x: number,
+    y: number,
+    shapeType?: string,
+  ) => void;
   onAddPath: (path: PathPoint[], isClosed: boolean) => void;
   onSelectElement: (id: string | null) => void;
   onUpdateElement: (id: string, updates: any) => void;
   onPan: (dx: number, dy: number) => void;
 }
 
-export function useCanvasTool(
-  activeTool: string,
-  callbacks: ToolCallbacks
-) {
+export function useCanvasTool(activeTool: string, callbacks: ToolCallbacks) {
   const [state, setState] = useState<CanvasToolState>({
     activeTool,
     isDrawing: false,
@@ -125,7 +127,7 @@ export function useCanvasTool(
           break;
       }
     },
-    [activeTool, callbacks]
+    [activeTool, callbacks],
   );
 
   const onCanvasMouseMove = useCallback(
@@ -139,9 +141,13 @@ export function useCanvasTool(
 
         case "pencil":
           // Continuous drawing while dragging - sample points for performance
-          if (state.pathPoints.length === 0 ||
-              Math.hypot(x - state.pathPoints[state.pathPoints.length - 1].x,
-                         y - state.pathPoints[state.pathPoints.length - 1].y) > 3) {
+          if (
+            state.pathPoints.length === 0 ||
+            Math.hypot(
+              x - state.pathPoints[state.pathPoints.length - 1].x,
+              y - state.pathPoints[state.pathPoints.length - 1].y,
+            ) > 3
+          ) {
             setState((prev) => ({
               ...prev,
               pathPoints: [...prev.pathPoints, { x, y }],
@@ -199,7 +205,7 @@ export function useCanvasTool(
           break;
       }
     },
-    [activeTool, state.isDrawing, state.dragStart, callbacks]
+    [activeTool, state.isDrawing, state.dragStart, callbacks],
   );
 
   const onCanvasMouseUp = useCallback(
@@ -215,16 +221,31 @@ export function useCanvasTool(
         case "arrow":
         case "star":
           // Shape: create if dragged enough
-          if (state.previewRect && (state.previewRect.width > 10 || state.previewRect.height > 10)) {
-            callbacks.onAddElement(activeTool, state.dragStart.x, state.dragStart.y, activeTool);
+          if (
+            state.previewRect &&
+            (state.previewRect.width > 10 || state.previewRect.height > 10)
+          ) {
+            callbacks.onAddElement(
+              activeTool,
+              state.dragStart.x,
+              state.dragStart.y,
+              activeTool,
+            );
           }
           resetDrawing();
           break;
 
         case "frame":
           // Frame: create if dragged
-          if (state.previewRect && (state.previewRect.width > 10 || state.previewRect.height > 10)) {
-            callbacks.onAddElement("frame", state.dragStart.x, state.dragStart.y);
+          if (
+            state.previewRect &&
+            (state.previewRect.width > 10 || state.previewRect.height > 10)
+          ) {
+            callbacks.onAddElement(
+              "frame",
+              state.dragStart.x,
+              state.dragStart.y,
+            );
           }
           resetDrawing();
           break;
@@ -244,7 +265,14 @@ export function useCanvasTool(
           break;
       }
     },
-    [activeTool, state.dragStart, state.previewRect, state.pathPoints, callbacks, resetDrawing]
+    [
+      activeTool,
+      state.dragStart,
+      state.previewRect,
+      state.pathPoints,
+      callbacks,
+      resetDrawing,
+    ],
   );
 
   const onCanvasClick = useCallback(
@@ -258,7 +286,7 @@ export function useCanvasTool(
         }));
       }
     },
-    [activeTool]
+    [activeTool],
   );
 
   const onCanvasKeyDown = useCallback(
@@ -274,7 +302,7 @@ export function useCanvasTool(
         }
       }
     },
-    [activeTool, state.pathPoints, callbacks, resetDrawing]
+    [activeTool, state.pathPoints, callbacks, resetDrawing],
   );
 
   const onElementMouseDown = useCallback(
@@ -284,7 +312,7 @@ export function useCanvasTool(
         callbacks.onSelectElement(id);
       }
     },
-    [activeTool, callbacks]
+    [activeTool, callbacks],
   );
 
   return {

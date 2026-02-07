@@ -93,7 +93,11 @@ export interface Layer {
   id: string;
   name: string;
   type: "frame" | "text" | "shape" | "component" | "path" | "comment";
-  properties?: LayerProperties | FrameProperties | TextBoxProperties | PathProperties;
+  properties?:
+    | LayerProperties
+    | FrameProperties
+    | TextBoxProperties
+    | PathProperties;
   comment?: Comment; // For comment type
   children?: Layer[];
 }

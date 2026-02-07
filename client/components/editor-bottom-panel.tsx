@@ -7,7 +7,10 @@ interface EditorBottomPanelProps {
   elementsCount: number;
 }
 
-export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBottomPanelProps) {
+export function EditorBottomPanel({
+  selectedElement,
+  elementsCount,
+}: EditorBottomPanelProps) {
   const [showCommentBubble, setShowCommentBubble] = useState(false);
   const [elementComments, setElementComments] = useState<
     Record<string, string[]>
@@ -15,7 +18,9 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
   const [newComment, setNewComment] = useState("");
 
   const currentElementId = selectedElement?.id;
-  const currentComments = currentElementId ? (elementComments[currentElementId] || []) : [];
+  const currentComments = currentElementId
+    ? elementComments[currentElementId] || []
+    : [];
 
   // Simply prevent event from going anywhere
   const stopEvent = useCallback((e: React.MouseEvent<HTMLElement>) => {
@@ -28,7 +33,10 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
 
     setElementComments((prev) => ({
       ...prev,
-      [currentElementId]: [...(prev[currentElementId] || []), newComment.trim()],
+      [currentElementId]: [
+        ...(prev[currentElementId] || []),
+        newComment.trim(),
+      ],
     }));
     setNewComment("");
   }, [currentElementId, newComment]);
@@ -40,18 +48,20 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
       setElementComments((prev) => ({
         ...prev,
         [currentElementId]: (prev[currentElementId] || []).filter(
-          (_, i) => i !== index
+          (_, i) => i !== index,
         ),
       }));
     },
-    [currentElementId]
+    [currentElementId],
   );
 
   // No element selected
   if (!selectedElement || !selectedElement.properties) {
     return (
       <div className="border-t border-border bg-background/50 px-6 py-2 text-xs text-muted-foreground flex items-center justify-between">
-        <span>{elementsCount} element{elementsCount !== 1 ? "s" : ""}</span>
+        <span>
+          {elementsCount} element{elementsCount !== 1 ? "s" : ""}
+        </span>
       </div>
     );
   }
@@ -66,9 +76,13 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
         <div className="flex items-center gap-6">
           {/* Element name */}
           <div className="flex items-center gap-2">
-            <span className="text-muted-foreground">{selectedElement.name}</span>
+            <span className="text-muted-foreground">
+              {selectedElement.name}
+            </span>
             <span className="text-muted-foreground/50">·</span>
-            <span className="text-muted-foreground/70">{selectedElement.type}</span>
+            <span className="text-muted-foreground/70">
+              {selectedElement.type}
+            </span>
           </div>
 
           {/* Position */}
@@ -88,7 +102,9 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
                 className="w-3 h-3 rounded border border-border"
                 style={{ backgroundColor: style.fill }}
               />
-              <span className="text-muted-foreground text-xs">{style.fill}</span>
+              <span className="text-muted-foreground text-xs">
+                {style.fill}
+              </span>
             </div>
           )}
         </div>
@@ -130,7 +146,9 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
           <div className="flex items-center justify-between p-3 border-b border-border">
             <div className="flex items-center gap-2">
               <MessageCircle size={16} className="text-foreground" />
-              <span className="text-sm font-medium text-foreground">Comments</span>
+              <span className="text-sm font-medium text-foreground">
+                Comments
+              </span>
             </div>
             <button
               onClick={(e) => {

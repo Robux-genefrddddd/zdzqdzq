@@ -13,7 +13,12 @@ interface CanvasProps {
   activeTool?: string;
   activeShapeType?: string;
   onSelectElement: (id: string | null) => void;
-  onAddElement: (type: string, x: number, y: number, shapeType?: string) => string;
+  onAddElement: (
+    type: string,
+    x: number,
+    y: number,
+    shapeType?: string,
+  ) => string;
   onAddPath: (path: PathPoint[], isClosed: boolean) => void;
   onUpdateElement: (id: string, updates: any) => void;
   onDeleteElement?: (id: string) => void;
@@ -142,7 +147,9 @@ export function Canvas({
         ) : (
           <>
             {elements.map((element) =>
-              element.type === "path" && element.properties && "path" in element.properties ? (
+              element.type === "path" &&
+              element.properties &&
+              "path" in element.properties ? (
                 <div
                   key={element.id}
                   className="absolute"
@@ -152,7 +159,10 @@ export function Canvas({
                     width: `${element.properties.width}px`,
                     height: `${element.properties.height}px`,
                     cursor: "grab",
-                    outline: selectedElementId === element.id ? "2px solid #3b82f6" : "none",
+                    outline:
+                      selectedElementId === element.id
+                        ? "2px solid #3b82f6"
+                        : "none",
                   }}
                   onClick={() => onSelectElement(element.id)}
                 >
@@ -172,7 +182,7 @@ export function Canvas({
                   onDuplicate={() => onDuplicateElement?.(element.id)}
                   zoom={zoom}
                 />
-              )
+              ),
             )}
           </>
         )}
@@ -191,10 +201,9 @@ export function Canvas({
               borderRadius:
                 activeTool === "circle"
                   ? "50%"
-                  : activeTool === "triangle" ||
-                      activeTool === "polygon"
-                  ? "0"
-                  : "8px",
+                  : activeTool === "triangle" || activeTool === "polygon"
+                    ? "0"
+                    : "8px",
               pointerEvents: "none",
               zIndex: 10,
             }}

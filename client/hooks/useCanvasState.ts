@@ -27,7 +27,9 @@ export function useCanvasState(initialLayers: Layer[] = []) {
       const newElement: Layer = {
         id: `layer-${Date.now()}`,
         name:
-          type.charAt(0).toUpperCase() + type.slice(1) + ` ${state.elements.length + 1}`,
+          type.charAt(0).toUpperCase() +
+          type.slice(1) +
+          ` ${state.elements.length + 1}`,
         type,
         properties: {
           x,

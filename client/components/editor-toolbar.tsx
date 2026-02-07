@@ -125,7 +125,6 @@ export function EditorToolbar({
     <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
       {/* Main toolbar container */}
       <div className="flex items-center gap-3 px-4 py-3 bg-card border border-border rounded-2xl shadow-lg backdrop-blur-md">
-
         {/* GROUP 2: Shape tools with dropdown */}
         <DropdownMenu open={showShapeMenu} onOpenChange={setShowShapeMenu}>
           <div className="flex items-center gap-1">
@@ -133,9 +132,15 @@ export function EditorToolbar({
               <button
                 className={`relative flex items-center justify-center h-8 w-8 rounded transition-colors ${
                   activeTool?.includes("shape") ||
-                  ["rectangle", "circle", "triangle", "polygon", "line", "arrow", "star"].includes(
-                    activeTool || ""
-                  )
+                  [
+                    "rectangle",
+                    "circle",
+                    "triangle",
+                    "polygon",
+                    "line",
+                    "arrow",
+                    "star",
+                  ].includes(activeTool || "")
                     ? "bg-blue-500 text-white"
                     : "text-foreground/70 hover:text-foreground hover:bg-foreground/10"
                 }`}
@@ -292,13 +297,11 @@ export function EditorToolbar({
                     onZoom?.(
                       typeof option.value === "number"
                         ? option.value
-                        : option.value
+                        : option.value,
                     );
                     setShowZoomMenu(false);
                   }}
-                  className={
-                    zoomLevel === option.value ? "bg-blue-500/20" : ""
-                  }
+                  className={zoomLevel === option.value ? "bg-blue-500/20" : ""}
                 >
                   {option.label}
                 </DropdownMenuItem>

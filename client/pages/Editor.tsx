@@ -25,7 +25,9 @@ export default function Editor() {
 
   // Manage canvas state at parent level - start with empty canvas
   const [elements, setElements] = useState<Layer[]>([]);
-  const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
+  const [selectedElementId, setSelectedElementId] = useState<string | null>(
+    null,
+  );
   const [zoom, setZoom] = useState(1);
   const [panX, setPanX] = useState(0);
   const [panY, setPanY] = useState(0);
@@ -110,42 +112,39 @@ export default function Editor() {
     [elements.length, history, historyIndex],
   );
 
-  const handleUpdateElement = useCallback(
-    (id: string, updates: any) => {
-      setElements((prev) =>
-        prev.map((el) => {
-          if (el.id === id) {
-            const properties = el.properties || {
-              x: 0,
-              y: 0,
-              width: 200,
-              height: 120,
-              style: {},
-            };
+  const handleUpdateElement = useCallback((id: string, updates: any) => {
+    setElements((prev) =>
+      prev.map((el) => {
+        if (el.id === id) {
+          const properties = el.properties || {
+            x: 0,
+            y: 0,
+            width: 200,
+            height: 120,
+            style: {},
+          };
 
-            return {
-              ...el,
-              name: updates.name ?? el.name,
-              properties: {
-                ...properties,
-                x: updates.x ?? properties.x,
-                y: updates.y ?? properties.y,
-                width: updates.width ?? properties.width,
-                height: updates.height ?? properties.height,
-                style: {
-                  ...properties.style,
-                  ...(updates.style || {}),
-                },
-                content: updates.content ?? properties.content,
+          return {
+            ...el,
+            name: updates.name ?? el.name,
+            properties: {
+              ...properties,
+              x: updates.x ?? properties.x,
+              y: updates.y ?? properties.y,
+              width: updates.width ?? properties.width,
+              height: updates.height ?? properties.height,
+              style: {
+                ...properties.style,
+                ...(updates.style || {}),
               },
-            };
-          }
-          return el;
-        }),
-      );
-    },
-    [],
-  );
+              content: updates.content ?? properties.content,
+            },
+          };
+        }
+        return el;
+      }),
+    );
+  }, []);
 
   const handleDeleteElement = useCallback(
     (id: string) => {
@@ -160,7 +159,7 @@ export default function Editor() {
       });
       setSelectedElementId((current) => (current === id ? null : current));
     },
-    [history, historyIndex]
+    [history, historyIndex],
   );
 
   const handleDuplicateElement = useCallback(
@@ -191,7 +190,7 @@ export default function Editor() {
         return newElements;
       });
     },
-    [history, historyIndex]
+    [history, historyIndex],
   );
 
   const handleAddPath = useCallback(
@@ -236,7 +235,7 @@ export default function Editor() {
       });
       setSelectedElementId(newElement.id);
     },
-    [elements.length, history, historyIndex]
+    [elements.length, history, historyIndex],
   );
 
   // Undo/Redo functionality
@@ -257,17 +256,28 @@ export default function Editor() {
   }, [history, historyIndex]);
 
   // Update history when elements change (for undo/redo)
-  const updateHistory = useCallback((newElements: Layer[]) => {
-    const newHistory = history.slice(0, historyIndex + 1);
-    newHistory.push(newElements);
-    setHistory(newHistory);
-    setHistoryIndex(newHistory.length - 1);
-  }, [history, historyIndex]);
+  const updateHistory = useCallback(
+    (newElements: Layer[]) => {
+      const newHistory = history.slice(0, historyIndex + 1);
+      newHistory.push(newElements);
+      setHistory(newHistory);
+      setHistoryIndex(newHistory.length - 1);
+    },
+    [history, historyIndex],
+  );
 
   // Keyboard shortcuts
   useKeyboardShortcuts({
     onSelectTool: (tool: string) => {
-      const shapeTypes = ["rectangle", "circle", "triangle", "polygon", "line", "arrow", "star"];
+      const shapeTypes = [
+        "rectangle",
+        "circle",
+        "triangle",
+        "polygon",
+        "line",
+        "arrow",
+        "star",
+      ];
       if (shapeTypes.includes(tool)) {
         setActiveShapeType(tool);
       }
@@ -428,7 +438,10 @@ export default function Editor() {
           />
 
           {/* Bottom Panel */}
-          <EditorBottomPanel selectedElement={selectedElement} elementsCount={elements.length} />
+          <EditorBottomPanel
+            selectedElement={selectedElement}
+            elementsCount={elements.length}
+          />
         </div>
 
         {/* Floating Toolbar */}
@@ -436,7 +449,15 @@ export default function Editor() {
           activeTool={activeTool}
           onToolChange={(tool) => {
             // If it's a shape type (rectangle, circle, etc.), set activeShapeType
-            const shapeTypes = ["rectangle", "circle", "triangle", "polygon", "line", "arrow", "star"];
+            const shapeTypes = [
+              "rectangle",
+              "circle",
+              "triangle",
+              "polygon",
+              "line",
+              "arrow",
+              "star",
+            ];
             if (shapeTypes.includes(tool)) {
               setActiveShapeType(tool);
               setActiveTool(tool);

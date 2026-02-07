@@ -1,4 +1,13 @@
-import { Plus, ChevronDown, File, Layers, Eye, EyeOff, Lock, Unlock } from "lucide-react";
+import {
+  Plus,
+  ChevronDown,
+  File,
+  Layers,
+  Eye,
+  EyeOff,
+  Lock,
+  Unlock,
+} from "lucide-react";
 import { useState } from "react";
 import { Layer } from "@shared/types";
 

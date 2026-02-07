@@ -1,6 +1,6 @@
 import { Layer } from "@shared/types";
-import { MessageCircle, AlertCircle, Eye, Lock, Zap } from "lucide-react";
-import { useState } from "react";
+import { MessageCircle, Eye, Lock } from "lucide-react";
+import { useState, useCallback } from "react";
 
 interface EditorBottomPanelProps {
   selectedElement: Layer | undefined;
@@ -12,24 +12,42 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
   const [comments, setComments] = useState<Array<{ id: string; text: string; author: string; timestamp: Date }>>([]);
   const [newComment, setNewComment] = useState("");
 
-  const handleAddComment = () => {
-    if (newComment.trim() && selectedElement) {
-      setComments([
-        ...comments,
-        {
-          id: `comment-${Date.now()}`,
-          text: newComment,
-          author: "You",
-          timestamp: new Date(),
-        },
-      ]);
-      setNewComment("");
-    }
-  };
+  const handleToggleComments = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setShowComments(!showComments);
+    },
+    [showComments]
+  );
 
-  const handleDeleteComment = (id: string) => {
-    setComments(comments.filter((c) => c.id !== id));
-  };
+  const handleAddComment = useCallback(
+    (e?: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLInputElement>) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (newComment.trim() && selectedElement) {
+        setComments([
+          ...comments,
+          {
+            id: `comment-${Date.now()}`,
+            text: newComment,
+            author: "You",
+            timestamp: new Date(),
+          },
+        ]);
+        setNewComment("");
+      }
+    },
+    [newComment, selectedElement, comments]
+  );
+
+  const handleDeleteComment = useCallback((id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setComments((prev) => prev.filter((c) => c.id !== id));
+  }, []);
 
   // Default view when nothing selected
   if (!selectedElement || !selectedElement.properties) {

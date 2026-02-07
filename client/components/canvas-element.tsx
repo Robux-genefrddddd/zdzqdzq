@@ -215,4 +215,14 @@ export function CanvasElement({
       )}
     </div>
   );
+
+  return (
+    <ElementContextMenu
+      element={element}
+      onDelete={onDelete}
+      onDuplicate={onDuplicate}
+    >
+      {elementContent}
+    </ElementContextMenu>
+  );
 }

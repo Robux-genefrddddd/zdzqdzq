@@ -133,6 +133,40 @@ export default function Editor() {
     });
   }, []);
 
+  const handleAddPath = useCallback((points: PathPoint[], isClosed: boolean) => {
+    const minX = Math.min(...points.map((p) => p.x));
+    const minY = Math.min(...points.map((p) => p.y));
+    const maxX = Math.max(...points.map((p) => p.x));
+    const maxY = Math.max(...points.map((p) => p.y));
+
+    const newElement: Layer = {
+      id: `layer-${Date.now()}`,
+      name: `Path ${elements.length + 1}`,
+      type: "path",
+      properties: {
+        x: minX,
+        y: minY,
+        width: maxX - minX,
+        height: maxY - minY,
+        style: {
+          fill: null,
+          stroke: "#000000",
+          strokeWidth: 2,
+          opacity: 1,
+        },
+        path: {
+          points: points.map((p) => ({ x: p.x - minX, y: p.y - minY })),
+          closed: isClosed,
+          stroke: "#000000",
+          strokeWidth: 2,
+        },
+      },
+    };
+
+    setElements((prev) => [...prev, newElement]);
+    setSelectedElementId(newElement.id);
+  }, [elements.length]);
+
   return (
     <div className="flex h-screen bg-background">
       {/* Left Toolbar - Vertical Icons */}

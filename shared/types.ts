@@ -36,9 +36,30 @@ export interface Page {
   layers: Layer[];
 }
 
+export interface LayerStyle {
+  fill?: string;
+  stroke?: string;
+  strokeWidth?: number;
+  borderRadius?: number;
+  fontSize?: number;
+  fontWeight?: string;
+  textAlign?: string;
+  opacity?: number;
+}
+
+export interface LayerProperties {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  style: LayerStyle;
+  content?: string; // For text elements
+}
+
 export interface Layer {
   id: string;
   name: string;
   type: "frame" | "text" | "shape" | "component";
+  properties?: LayerProperties;
   children?: Layer[];
 }

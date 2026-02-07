@@ -17,8 +17,8 @@ export default function Editor() {
   const file = fileId ? mockFiles.find((f) => f.id === fileId) : undefined;
   const editorData = mockEditorFile;
 
-  // Manage canvas state at parent level
-  const [elements, setElements] = useState<Layer[]>(editorData.pages[0]?.layers || []);
+  // Manage canvas state at parent level - start with empty canvas
+  const [elements, setElements] = useState<Layer[]>([]);
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1);
   const [panX, setPanX] = useState(0);

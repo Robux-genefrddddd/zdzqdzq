@@ -1,17 +1,24 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Share2, Play, Menu, File } from "lucide-react";
+import { useState } from "react";
 import { EditorLeftPanel } from "@/components/editor-left-panel";
-import { EditorRightPanel } from "@/components/editor-right-panel";
+import { EditorPropertiesPanel } from "@/components/editor-properties-panel";
 import { EditorToolbar } from "@/components/editor-toolbar";
+import { Canvas } from "@/components/canvas";
+import { useCanvasState } from "@/hooks/useCanvasState";
 import { mockFiles, mockEditorFile } from "@shared/mock-data";
 
 export default function Editor() {
   const { fileId } = useParams();
   const navigate = useNavigate();
+  const [activeTool, setActiveTool] = useState<string>("select");
+  const [canvasState, setCanvasState] = useState<any>(null);
 
   // Get file data
   const file = fileId ? mockFiles.find((f) => f.id === fileId) : undefined;
   const editorData = mockEditorFile;
+
+  const selectedElement = canvasState?.getSelectedElement?.();
 
   return (
     <div className="flex h-screen bg-background">

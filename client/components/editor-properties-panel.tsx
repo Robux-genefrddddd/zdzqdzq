@@ -77,24 +77,38 @@ export function EditorPropertiesPanel({
   }: {
     label: string;
     value: number | string;
-    onChange: (value: any) => void;
+    onChange: (value: number) => void;
     suffix?: string;
-  }) => (
-    <div>
-      <label className="text-xs uppercase tracking-widest text-muted-foreground font-medium mb-1 block">
-        {label}
-      </label>
-      <div className="flex items-center gap-2">
-        <input
-          type="number"
-          value={value}
-          onChange={(e) => onChange(e.target.value === "" ? 0 : parseFloat(e.target.value))}
-          className="flex-1 px-2 py-1 rounded bg-background border border-border text-sm text-foreground"
-        />
-        {suffix && <span className="text-xs text-muted-foreground">{suffix}</span>}
+  }) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const val = e.target.value;
+      if (val === "" || val === "-") {
+        onChange(0);
+      } else {
+        const num = parseFloat(val);
+        if (!isNaN(num)) {
+          onChange(num);
+        }
+      }
+    };
+
+    return (
+      <div>
+        <label className="text-xs uppercase tracking-widest text-muted-foreground font-medium mb-1 block">
+          {label}
+        </label>
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            value={value}
+            onChange={handleChange}
+            className="flex-1 px-2 py-1 rounded bg-background border border-border text-sm text-foreground"
+          />
+          {suffix && <span className="text-xs text-muted-foreground">{suffix}</span>}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const ColorInput = ({
     label,

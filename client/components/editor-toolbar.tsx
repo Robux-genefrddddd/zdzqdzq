@@ -126,27 +126,6 @@ export function EditorToolbar({
     <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
       {/* Main toolbar container */}
       <div className="flex items-center gap-3 px-4 py-3 bg-card border border-border rounded-2xl shadow-lg backdrop-blur-md">
-        
-        {/* GROUP 1: Selection & Frame */}
-        <div className="flex items-center gap-1">
-          <ToolButton
-            id="select"
-            icon={MousePointer2}
-            label="Move"
-            shortcut="V"
-            onClick={() => onToolChange?.("select")}
-          />
-          <ToolButton
-            id="frame"
-            icon={Square}
-            label="Frame"
-            shortcut="F"
-            onClick={() => onToolChange?.("frame")}
-          />
-        </div>
-
-        {/* Separator */}
-        <div className="w-px h-6 bg-border/50" />
 
         {/* GROUP 2: Shape tools with dropdown */}
         <DropdownMenu open={showShapeMenu} onOpenChange={setShowShapeMenu}>

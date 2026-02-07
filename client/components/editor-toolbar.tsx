@@ -111,7 +111,7 @@ export function EditorToolbar({
 
   const penTools = [
     { id: "pen", label: "Pen", shortcut: "P" },
-    { id: "pencil", label: "Pencil", shortcut: null },
+    { id: "pencil", label: "Pencil", shortcut: "Shift+P" },
   ];
 
   const zoomOptions = [

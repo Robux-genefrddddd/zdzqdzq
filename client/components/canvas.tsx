@@ -38,6 +38,14 @@ export function Canvas({
     width: number;
     height: number;
   } | null>(null);
+  const [isLassoSelecting, setIsLassoSelecting] = useState(false);
+  const [lassoRect, setLassoRect] = useState<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null>(null);
+  const [lassoStart, setLassoStart] = useState({ x: 0, y: 0 });
 
   const handleCanvasMouseDown = (e: React.MouseEvent) => {
     if (activeTool === "select") return;

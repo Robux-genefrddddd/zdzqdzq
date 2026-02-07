@@ -35,7 +35,9 @@ export function useCanvasState(initialLayers: Layer[] = []) {
           width: 200,
           height: 120,
           style: {
-            fill: type === "text" ? "transparent" : "#6366f1",
+            // No default fill or stroke - user adds them with +
+            fill: undefined,
+            stroke: undefined,
             borderRadius: 8,
             fontSize: type === "text" ? 14 : undefined,
             fontWeight: type === "text" ? "500" : undefined,

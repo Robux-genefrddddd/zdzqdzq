@@ -12,13 +12,14 @@ export default function Editor() {
   const { fileId } = useParams();
   const navigate = useNavigate();
   const [activeTool, setActiveTool] = useState<string>("select");
-  const [canvasState, setCanvasState] = useState<any>(null);
 
   // Get file data
   const file = fileId ? mockFiles.find((f) => f.id === fileId) : undefined;
   const editorData = mockEditorFile;
 
-  const selectedElement = canvasState?.getSelectedElement?.();
+  // Manage canvas state at parent level
+  const canvasState = useCanvasState(editorData.pages[0]?.layers || []);
+  const selectedElement = canvasState.getSelectedElement();
 
   return (
     <div className="flex h-screen bg-background">

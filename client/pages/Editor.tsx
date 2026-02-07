@@ -101,6 +101,28 @@ export default function Editor() {
     setSelectedElementId((current) => (current === id ? null : current));
   }, []);
 
+  const handleDuplicateElement = useCallback((id: string) => {
+    setElements((prev) => {
+      const elementToDuplicate = prev.find((el) => el.id === id);
+      if (!elementToDuplicate) return prev;
+
+      const duplicated: Layer = {
+        ...elementToDuplicate,
+        id: `layer-${Date.now()}`,
+        name: `${elementToDuplicate.name} copy`,
+        properties: elementToDuplicate.properties
+          ? {
+              ...elementToDuplicate.properties,
+              x: (elementToDuplicate.properties.x || 0) + 20,
+              y: (elementToDuplicate.properties.y || 0) + 20,
+            }
+          : undefined,
+      };
+
+      return [...prev, duplicated];
+    });
+  }, []);
+
   return (
     <div className="flex h-screen bg-background">
       {/* Left Toolbar - Vertical Icons */}

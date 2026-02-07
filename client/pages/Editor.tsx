@@ -116,32 +116,52 @@ export default function Editor() {
     [],
   );
 
-  const handleDeleteElement = useCallback((id: string) => {
-    setElements((prev) => prev.filter((el) => el.id !== id));
-    setSelectedElementId((current) => (current === id ? null : current));
-  }, []);
+  const handleDeleteElement = useCallback(
+    (id: string) => {
+      setElements((prev) => {
+        const newElements = prev.filter((el) => el.id !== id);
+        // Update history when element is deleted
+        const newHistory = history.slice(0, historyIndex + 1);
+        newHistory.push(newElements);
+        setHistory(newHistory);
+        setHistoryIndex(newHistory.length - 1);
+        return newElements;
+      });
+      setSelectedElementId((current) => (current === id ? null : current));
+    },
+    [history, historyIndex]
+  );
 
-  const handleDuplicateElement = useCallback((id: string) => {
-    setElements((prev) => {
-      const elementToDuplicate = prev.find((el) => el.id === id);
-      if (!elementToDuplicate) return prev;
+  const handleDuplicateElement = useCallback(
+    (id: string) => {
+      setElements((prev) => {
+        const elementToDuplicate = prev.find((el) => el.id === id);
+        if (!elementToDuplicate) return prev;
 
-      const duplicated: Layer = {
-        ...elementToDuplicate,
-        id: `layer-${Date.now()}`,
-        name: `${elementToDuplicate.name} copy`,
-        properties: elementToDuplicate.properties
-          ? {
-              ...elementToDuplicate.properties,
-              x: (elementToDuplicate.properties.x || 0) + 20,
-              y: (elementToDuplicate.properties.y || 0) + 20,
-            }
-          : undefined,
-      };
+        const duplicated: Layer = {
+          ...elementToDuplicate,
+          id: `layer-${Date.now()}`,
+          name: `${elementToDuplicate.name} copy`,
+          properties: elementToDuplicate.properties
+            ? {
+                ...elementToDuplicate.properties,
+                x: (elementToDuplicate.properties.x || 0) + 20,
+                y: (elementToDuplicate.properties.y || 0) + 20,
+              }
+            : undefined,
+        };
 
-      return [...prev, duplicated];
-    });
-  }, []);
+        const newElements = [...prev, duplicated];
+        // Update history when element is duplicated
+        const newHistory = history.slice(0, historyIndex + 1);
+        newHistory.push(newElements);
+        setHistory(newHistory);
+        setHistoryIndex(newHistory.length - 1);
+        return newElements;
+      });
+    },
+    [history, historyIndex]
+  );
 
   const handleAddPath = useCallback((points: PathPoint[], isClosed: boolean) => {
     const minX = Math.min(...points.map((p) => p.x));

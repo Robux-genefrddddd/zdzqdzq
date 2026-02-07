@@ -1,6 +1,8 @@
-import { useRef, useState } from "react";
+import { useRef, useEffect } from "react";
 import { CanvasElement } from "./canvas-element";
-import { Layer } from "@shared/types";
+import { PathPreview } from "./canvas-path";
+import { Layer, PathPoint } from "@shared/types";
+import { useCanvasTool } from "@/hooks/useCanvasTool";
 
 interface CanvasProps {
   elements: Layer[];
@@ -12,9 +14,11 @@ interface CanvasProps {
   activeShapeType?: string;
   onSelectElement: (id: string | null) => void;
   onAddElement: (type: string, x: number, y: number, shapeType?: string) => string;
+  onAddPath: (path: PathPoint[], isClosed: boolean) => void;
   onUpdateElement: (id: string, updates: any) => void;
   onDeleteElement?: (id: string) => void;
   onDuplicateElement?: (id: string) => void;
+  onPan?: (dx: number, dy: number) => void;
 }
 
 export function Canvas({
@@ -27,140 +31,81 @@ export function Canvas({
   activeShapeType = "rectangle",
   onSelectElement,
   onAddElement,
+  onAddPath,
   onUpdateElement,
   onDeleteElement,
   onDuplicateElement,
+  onPan,
 }: CanvasProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
-  const [isCanvasCreating, setIsCanvasCreating] = useState(false);
-  const [createStart, setCreateStart] = useState({ x: 0, y: 0 });
-  const [previewRect, setPreviewRect] = useState<{
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  } | null>(null);
-  const [isLassoSelecting, setIsLassoSelecting] = useState(false);
-  const [lassoRect, setLassoRect] = useState<{
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  } | null>(null);
-  const [lassoStart, setLassoStart] = useState({ x: 0, y: 0 });
 
+  // Use tool-specific behaviors
+  const { state, handlers, resetDrawing } = useCanvasTool(activeTool, {
+    onAddElement: (type, x, y, shapeType) => {
+      // Adjust for zoom and pan
+      const adjustedX = x / zoom - panX;
+      const adjustedY = y / zoom - panY;
+      onAddElement(type, adjustedX, adjustedY, shapeType || activeShapeType);
+    },
+    onAddPath: onAddPath,
+    onSelectElement,
+    onUpdateElement,
+    onPan: onPan || (() => {}),
+  });
+
+  // Canvas event handlers
   const handleCanvasMouseDown = (e: React.MouseEvent) => {
     if (!canvasRef.current) return;
-
     const rect = canvasRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / zoom - panX;
-    const y = (e.clientY - rect.top) / zoom - panY;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-    // Lasso selection in select mode
-    if (activeTool === "select" && e.target === canvasRef.current) {
-      setIsLassoSelecting(true);
-      setLassoStart({ x, y });
-      return;
-    }
-
-    // No creation in select, hand, comment, resources, or play mode
-    const noCreationTools = ["select", "hand", "comment", "resources", "play"];
-    if (noCreationTools.includes(activeTool)) return;
-
-    setIsCanvasCreating(true);
-    setCreateStart({ x, y });
+    handlers.onCanvasMouseDown(x, y, e);
   };
 
   const handleCanvasMouseMove = (e: React.MouseEvent) => {
     if (!canvasRef.current) return;
-
     const rect = canvasRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / zoom - panX;
-    const y = (e.clientY - rect.top) / zoom - panY;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-    // Lasso selection
-    if (isLassoSelecting) {
-      const width = x - lassoStart.x;
-      const height = y - lassoStart.y;
-      setLassoRect({
-        x: width > 0 ? lassoStart.x : x,
-        y: height > 0 ? lassoStart.y : y,
-        width: Math.abs(width),
-        height: Math.abs(height),
-      });
-      return;
-    }
-
-    // Show live preview while dragging for element creation
-    if (!isCanvasCreating) return;
-
-    const width = Math.max(50, x - createStart.x);
-    const height = Math.max(50, y - createStart.y);
-    setPreviewRect({
-      x: createStart.x,
-      y: createStart.y,
-      width,
-      height,
-    });
+    handlers.onCanvasMouseMove(x, y, e);
   };
 
   const handleCanvasMouseUp = (e: React.MouseEvent) => {
     if (!canvasRef.current) return;
-
-    // Handle lasso selection
-    if (isLassoSelecting && lassoRect) {
-      setIsLassoSelecting(false);
-      setLassoRect(null);
-      // Select elements within lasso rect
-      const selectedInLasso = elements.filter((el) => {
-        if (!el.properties) return false;
-        const { x, y, width, height } = el.properties;
-        return (
-          x < lassoRect.x + lassoRect.width &&
-          x + width > lassoRect.x &&
-          y < lassoRect.y + lassoRect.height &&
-          y + height > lassoRect.y
-        );
-      });
-
-      // Select first element in lasso if any
-      if (selectedInLasso.length > 0) {
-        onSelectElement(selectedInLasso[0].id);
-      }
-      return;
-    }
-
-    // Handle element creation
-    if (!isCanvasCreating) return;
-
     const rect = canvasRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / zoom - panX;
-    const y = (e.clientY - rect.top) / zoom - panY;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-    // Shape types that need shapeType parameter
-    const shapeTypes = ["rectangle", "circle", "triangle", "polygon", "line", "arrow", "star"];
-    const shapeTypeParam = shapeTypes.includes(activeTool) ? activeTool : undefined;
-
-    // Don't create if barely dragged
-    if (Math.abs(x - createStart.x) < 10 && Math.abs(y - createStart.y) < 10) {
-      onAddElement(activeTool, createStart.x, createStart.y, shapeTypeParam);
-    } else {
-      const width = Math.max(50, x - createStart.x);
-      const height = Math.max(50, y - createStart.y);
-      const id = onAddElement(activeTool, createStart.x, createStart.y, shapeTypeParam);
-      onUpdateElement(id, { width, height });
-    }
-
-    setIsCanvasCreating(false);
-    setPreviewRect(null);
+    handlers.onCanvasMouseUp(x, y, e);
   };
 
   const handleCanvasClick = (e: React.MouseEvent) => {
-    // Deselect when clicking empty canvas (only if click is on the canvas itself, not a child)
-    if (e.currentTarget === e.target) {
+    if (!canvasRef.current) return;
+    const rect = canvasRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    handlers.onCanvasClick(x, y, e);
+
+    // Deselect on empty canvas click for select tool
+    if (activeTool === "select" && e.target === canvasRef.current) {
       onSelectElement(null);
     }
   };
+
+  // Keyboard events for Pen (Enter/Escape to finish)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      handlers.onCanvasKeyDown(e);
+    };
+
+    if (activeTool === "pen" || activeTool === "pencil") {
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [activeTool, handlers]);
 
   return (
     <div
@@ -183,15 +128,14 @@ export function Canvas({
         style={{
           transform: `translate(${panX}px, ${panY}px) scale(${zoom})`,
           transformOrigin: "0 0",
-          transition: isCanvasCreating ? "none" : undefined,
         }}
       >
-        {elements.length === 0 ? (
+        {elements.length === 0 && state.pathPoints.length === 0 ? (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="text-center space-y-2">
               <div className="text-6xl opacity-20">📐</div>
               <p className="text-muted-foreground text-sm opacity-50">
-                Click a tool and drag on canvas to create an element
+                Select a tool and start creating
               </p>
             </div>
           </div>
@@ -202,9 +146,7 @@ export function Canvas({
               element={element}
               isSelected={selectedElementId === element.id}
               onSelect={() => onSelectElement(element.id)}
-              onUpdate={(updates) =>
-                onUpdateElement(element.id, updates)
-              }
+              onUpdate={(updates) => onUpdateElement(element.id, updates)}
               onDelete={() => onDeleteElement?.(element.id)}
               onDuplicate={() => onDuplicateElement?.(element.id)}
               zoom={zoom}
@@ -212,39 +154,51 @@ export function Canvas({
           ))
         )}
 
-        {/* Live Preview Rectangle while dragging */}
-        {previewRect && (
+        {/* Preview Rectangle (for shapes/frames being dragged) */}
+        {state.previewRect && (
           <div
             style={{
               position: "absolute",
-              left: `${previewRect.x}px`,
-              top: `${previewRect.y}px`,
-              width: `${previewRect.width}px`,
-              height: `${previewRect.height}px`,
-              backgroundColor: "rgba(99, 102, 241, 0.2)",
-              border: "2px solid #6366f1",
-              borderRadius: "8px",
+              left: `${state.previewRect.x}px`,
+              top: `${state.previewRect.y}px`,
+              width: `${state.previewRect.width}px`,
+              height: `${state.previewRect.height}px`,
+              backgroundColor: "rgba(59, 130, 246, 0.1)",
+              border: "2px solid #3b82f6",
+              borderRadius:
+                activeTool === "circle"
+                  ? "50%"
+                  : activeTool === "triangle" ||
+                      activeTool === "polygon"
+                  ? "0"
+                  : "8px",
               pointerEvents: "none",
               zIndex: 10,
             }}
           />
         )}
 
-        {/* Lasso Selection Rectangle */}
-        {lassoRect && (
+        {/* Path Preview (for pen/pencil) */}
+        {(activeTool === "pen" || activeTool === "pencil") &&
+          state.pathPoints.length > 0 && (
+            <PathPreview
+              points={state.pathPoints}
+              currentPoint={
+                state.pathPoints.length > 0
+                  ? state.pathPoints[state.pathPoints.length - 1]
+                  : undefined
+              }
+            />
+          )}
+
+        {/* Pen tool instructions */}
+        {activeTool === "pen" && state.pathPoints.length > 0 && (
           <div
-            style={{
-              position: "absolute",
-              left: `${lassoRect.x}px`,
-              top: `${lassoRect.y}px`,
-              width: `${lassoRect.width}px`,
-              height: `${lassoRect.height}px`,
-              backgroundColor: "rgba(59, 130, 246, 0.15)",
-              border: "2px dashed #3b82f6",
-              pointerEvents: "none",
-              zIndex: 10,
-            }}
-          />
+            className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-2 rounded-lg text-sm pointer-events-none"
+            style={{ zIndex: 50 }}
+          >
+            Click to add points. Press Enter to finish, Escape to cancel.
+          </div>
         )}
       </div>
     </div>

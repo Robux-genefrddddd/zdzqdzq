@@ -109,15 +109,13 @@ export default function Editor() {
       <EditorPropertiesPanel
         selectedElement={selectedElement}
         onUpdate={(updates) => {
-          if (canvasState && selectedElement) {
+          if (selectedElement) {
             canvasState.updateElement(selectedElement.id, updates);
-            setCanvasState({ ...canvasState });
           }
         }}
         onDelete={() => {
-          if (canvasState && selectedElement) {
+          if (selectedElement) {
             canvasState.deleteElement(selectedElement.id);
-            setCanvasState({ ...canvasState });
           }
         }}
       />

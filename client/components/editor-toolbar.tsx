@@ -36,6 +36,15 @@ interface EditorToolbarProps {
 }
 
 export function EditorToolbar({ activeTool = "select", onToolChange }: EditorToolbarProps) {
+  const [showShapes, setShowShapes] = useState(false);
+
+  const shapes = [
+    { id: "rectangle", label: "Rectangle", icon: "▭" },
+    { id: "circle", label: "Circle", icon: "●" },
+    { id: "triangle", label: "Triangle", icon: "▲" },
+    { id: "polygon", label: "Polygon", icon: "⬡" },
+    { id: "line", label: "Line", icon: "—" },
+  ];
 
   const tools: Array<{
     id: ToolType;

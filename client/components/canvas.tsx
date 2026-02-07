@@ -26,6 +26,8 @@ export function Canvas({
   onSelectElement,
   onAddElement,
   onUpdateElement,
+  onDeleteElement,
+  onDuplicateElement,
 }: CanvasProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const [isCanvasCreating, setIsCanvasCreating] = useState(false);

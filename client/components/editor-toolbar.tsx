@@ -105,24 +105,69 @@ export function EditorToolbar({ activeTool = "select", onToolChange }: EditorToo
   return (
     <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
       <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-card border border-border shadow-soft-lg backdrop-blur-md">
-        {tools.map((tool) => (
-          <button
-            key={tool.id}
-            onClick={() => onToolChange?.(tool.id)}
-            className={`relative group p-2.5 rounded-lg transition-all duration-200 ${
-              activeTool === tool.id
-                ? "bg-foreground text-background"
-                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-            }`}
-            title={`${tool.label} ${tool.shortcut ? `(${tool.shortcut})` : ""}`}
-          >
-            {tool.icon}
-            {/* Tooltip */}
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 rounded text-xs text-background bg-foreground whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-              {tool.label}
-            </div>
-          </button>
-        ))}
+        {tools.map((tool) => {
+          // Render shape tool as dropdown
+          if (tool.id === "shape") {
+            return (
+              <DropdownMenu key={tool.id} open={showShapes} onOpenChange={setShowShapes}>
+                <div className="relative group">
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className={`relative group p-2.5 rounded-lg transition-all duration-200 flex items-center gap-1 ${
+                        activeTool?.includes("shape")
+                          ? "bg-foreground text-background"
+                          : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                      }`}
+                      title={`${tool.label} (${tool.shortcut})`}
+                    >
+                      {tool.icon}
+                      <ChevronDown className="w-3 h-3" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 rounded text-xs text-background bg-foreground whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                    {tool.label}
+                  </div>
+                </div>
+                <DropdownMenuContent align="center" side="top">
+                  <DropdownMenuLabel>Shapes</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {shapes.map((shape) => (
+                    <DropdownMenuItem
+                      key={shape.id}
+                      onClick={() => {
+                        onToolChange?.("shape" as ToolType);
+                        setShowShapes(false);
+                      }}
+                    >
+                      <span className="mr-2">{shape.icon}</span>
+                      {shape.label}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            );
+          }
+
+          // Regular tool button
+          return (
+            <button
+              key={tool.id}
+              onClick={() => onToolChange?.(tool.id)}
+              className={`relative group p-2.5 rounded-lg transition-all duration-200 ${
+                activeTool === tool.id
+                  ? "bg-foreground text-background"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+              title={`${tool.label} ${tool.shortcut ? `(${tool.shortcut})` : ""}`}
+            >
+              {tool.icon}
+              {/* Tooltip */}
+              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 rounded text-xs text-background bg-foreground whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                {tool.label}
+              </div>
+            </button>
+          );
+        })}
 
         {/* Divider */}
         <div className="w-px h-6 bg-border mx-1" />

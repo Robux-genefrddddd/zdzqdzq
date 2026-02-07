@@ -222,6 +222,23 @@ export function Canvas({
             }}
           />
         )}
+
+        {/* Lasso Selection Rectangle */}
+        {lassoRect && (
+          <div
+            style={{
+              position: "absolute",
+              left: `${lassoRect.x}px`,
+              top: `${lassoRect.y}px`,
+              width: `${lassoRect.width}px`,
+              height: `${lassoRect.height}px`,
+              backgroundColor: "rgba(59, 130, 246, 0.15)",
+              border: "2px dashed #3b82f6",
+              pointerEvents: "none",
+              zIndex: 10,
+            }}
+          />
+        )}
       </div>
     </div>
   );

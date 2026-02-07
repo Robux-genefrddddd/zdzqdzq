@@ -136,7 +136,7 @@ export function CanvasElement({
           backgroundColor,
           borderRadius: `${borderRadius}px`,
           border:
-            style.stroke
+            style.stroke && style.stroke !== null
               ? `${style.strokeWidth || 1}px solid ${style.stroke}`
               : !style.fill && element.type !== "text"
               ? "2px dashed #9ca3af"

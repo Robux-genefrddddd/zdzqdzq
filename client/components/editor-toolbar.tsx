@@ -136,9 +136,10 @@ export function EditorToolbar({ activeTool = "select", activeShapeType = "rectan
                     <DropdownMenuItem
                       key={shape.id}
                       onClick={() => {
-                        onToolChange?.("shape" as ToolType);
+                        onToolChange?.(shape.id);
                         setShowShapes(false);
                       }}
+                      className={activeShapeType === shape.id ? "bg-secondary" : ""}
                     >
                       <span className="mr-2">{shape.icon}</span>
                       {shape.label}

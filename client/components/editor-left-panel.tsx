@@ -27,7 +27,7 @@ export function EditorLeftPanel({
   const [lockedLayers, setLockedLayers] = useState<Set<string>>(new Set());
 
   return (
-    <div className="w-72 border-r border-border bg-background flex flex-col h-screen">
+    <div className="w-72 border-r border-border bg-background flex flex-col h-screen editor-left-panel">
       {/* Header */}
       <div className="p-4 border-b border-border">
         <div className="flex items-center gap-2 mb-2">

@@ -1,5 +1,14 @@
-import { ArrowUpRight, Moon, Sun } from "lucide-react";
+import { ArrowUpRight, Moon, Sun, Menu } from "lucide-react";
 import { useState, useEffect } from "react";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarInset,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 
 export default function Index() {
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);

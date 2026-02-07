@@ -89,9 +89,15 @@ export default function Editor() {
         {/* Canvas Area */}
         <div className="flex-1 relative overflow-auto">
           <Canvas
-            initialLayers={editorData.pages[0]?.layers || []}
+            elements={canvasState.elements}
+            selectedElementId={canvasState.selectedElementId}
+            zoom={canvasState.zoom}
+            panX={canvasState.panX}
+            panY={canvasState.panY}
             activeTool={activeTool}
-            onStateChange={setCanvasState}
+            onSelectElement={canvasState.selectElement}
+            onAddElement={canvasState.addElement}
+            onUpdateElement={canvasState.updateElement}
           />
         </div>
 

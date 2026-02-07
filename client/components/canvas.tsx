@@ -102,7 +102,33 @@ export function Canvas({
   };
 
   const handleCanvasMouseUp = (e: React.MouseEvent) => {
-    if (!isCanvasCreating || !canvasRef.current) return;
+    if (!canvasRef.current) return;
+
+    // Handle lasso selection
+    if (isLassoSelecting && lassoRect) {
+      setIsLassoSelecting(false);
+      setLassoRect(null);
+      // Select elements within lasso rect
+      const selectedInLasso = elements.filter((el) => {
+        if (!el.properties) return false;
+        const { x, y, width, height } = el.properties;
+        return (
+          x < lassoRect.x + lassoRect.width &&
+          x + width > lassoRect.x &&
+          y < lassoRect.y + lassoRect.height &&
+          y + height > lassoRect.y
+        );
+      });
+
+      // Select first element in lasso if any
+      if (selectedInLasso.length > 0) {
+        onSelectElement(selectedInLasso[0].id);
+      }
+      return;
+    }
+
+    // Handle element creation
+    if (!isCanvasCreating) return;
 
     const rect = canvasRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) / zoom - panX;

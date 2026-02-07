@@ -88,7 +88,7 @@ export function EditorToolbar({ activeTool = "select", onToolChange }: EditorToo
         {tools.map((tool) => (
           <button
             key={tool.id}
-            onClick={() => setActiveTool(tool.id)}
+            onClick={() => onToolChange?.(tool.id)}
             className={`relative group p-2.5 rounded-lg transition-all duration-200 ${
               activeTool === tool.id
                 ? "bg-foreground text-background"

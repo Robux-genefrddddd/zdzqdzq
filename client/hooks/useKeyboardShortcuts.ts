@@ -37,14 +37,14 @@ export function useKeyboardShortcuts(callbacks: KeyboardCallbacks) {
 
     if (isInputElement) return true;
 
-    // Also check if the active element is inside a sidebar or properties panel
-    // to prevent shortcuts from firing when editing properties
+    // Also check if the active element is inside an editor panel or sidebar
+    // to prevent shortcuts from firing when editing properties/values
     if (activeElement instanceof HTMLElement) {
-      const inSidebar = activeElement.closest(".w-72") !== null;
-      const inPropertiesPanel = activeElement.closest('[class*="properties"]') !== null;
-      const inPanel = activeElement.closest('[class*="panel"]') !== null;
+      const inPropertiesPanel = activeElement.closest(".editor-properties-panel") !== null;
+      const inLeftPanel = activeElement.closest(".editor-left-panel") !== null;
+      const inBottomPanel = activeElement.closest(".editor-bottom-panel") !== null;
 
-      return inSidebar || inPropertiesPanel || inPanel;
+      return inPropertiesPanel || inLeftPanel || inBottomPanel;
     }
 
     return false;

@@ -16,7 +16,7 @@ import {
   ZoomOut,
   ArrowRight,
   Star,
-  Line,
+  Minus,
 } from "lucide-react";
 import {
   DropdownMenu,

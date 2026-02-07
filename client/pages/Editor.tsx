@@ -13,6 +13,9 @@ export default function Editor() {
   const { fileId } = useParams();
   const navigate = useNavigate();
   const [activeTool, setActiveTool] = useState<string>("select");
+  const [activeShapeType, setActiveShapeType] = useState<string>("rectangle");
+  const [history, setHistory] = useState<Layer[][]>([[]]);
+  const [historyIndex, setHistoryIndex] = useState(0);
 
   // Get file data
   const file = fileId ? mockFiles.find((f) => f.id === fileId) : undefined;

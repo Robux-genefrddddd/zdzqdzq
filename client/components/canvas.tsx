@@ -140,6 +140,8 @@ export function Canvas({
               onUpdate={(updates) =>
                 onUpdateElement(element.id, updates)
               }
+              onDelete={() => onDeleteElement?.(element.id)}
+              onDuplicate={() => onDuplicateElement?.(element.id)}
               zoom={zoom}
             />
           ))

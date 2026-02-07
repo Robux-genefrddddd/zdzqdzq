@@ -1,12 +1,12 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Share2, Play, Menu, File } from "lucide-react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { EditorLeftPanel } from "@/components/editor-left-panel";
 import { EditorPropertiesPanel } from "@/components/editor-properties-panel";
 import { EditorToolbar } from "@/components/editor-toolbar";
 import { Canvas } from "@/components/canvas";
-import { useCanvasState } from "@/hooks/useCanvasState";
 import { mockFiles, mockEditorFile } from "@shared/mock-data";
+import type { Layer } from "@shared/types";
 
 export default function Editor() {
   const { fileId } = useParams();
@@ -18,8 +18,87 @@ export default function Editor() {
   const editorData = mockEditorFile;
 
   // Manage canvas state at parent level
-  const canvasState = useCanvasState(editorData.pages[0]?.layers || []);
-  const selectedElement = canvasState.getSelectedElement();
+  const [elements, setElements] = useState<Layer[]>(editorData.pages[0]?.layers || []);
+  const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
+  const [zoom, setZoom] = useState(1);
+  const [panX, setPanX] = useState(0);
+  const [panY, setPanY] = useState(0);
+
+  const selectedElement = elements.find((el) => el.id === selectedElementId);
+
+  const handleSelectElement = useCallback((id: string | null) => {
+    setSelectedElementId(id);
+  }, []);
+
+  const handleAddElement = useCallback(
+    (type: string, x: number, y: number) => {
+      const newElement: Layer = {
+        id: `layer-${Date.now()}`,
+        name: `${type.charAt(0).toUpperCase() + type.slice(1)} ${elements.length + 1}`,
+        type: type as any,
+        properties: {
+          x,
+          y,
+          width: 200,
+          height: 120,
+          style: {
+            fill: undefined,
+            stroke: undefined,
+            borderRadius: 8,
+            fontSize: type === "text" ? 14 : undefined,
+            fontWeight: type === "text" ? "500" : undefined,
+          },
+        },
+      };
+
+      setElements((prev) => [...prev, newElement]);
+      setSelectedElementId(newElement.id);
+      return newElement.id;
+    },
+    [elements.length],
+  );
+
+  const handleUpdateElement = useCallback(
+    (id: string, updates: any) => {
+      setElements((prev) =>
+        prev.map((el) => {
+          if (el.id === id) {
+            const properties = el.properties || {
+              x: 0,
+              y: 0,
+              width: 200,
+              height: 120,
+              style: {},
+            };
+
+            return {
+              ...el,
+              name: updates.name ?? el.name,
+              properties: {
+                ...properties,
+                x: updates.x ?? properties.x,
+                y: updates.y ?? properties.y,
+                width: updates.width ?? properties.width,
+                height: updates.height ?? properties.height,
+                style: {
+                  ...properties.style,
+                  ...(updates.style || {}),
+                },
+                content: updates.content ?? properties.content,
+              },
+            };
+          }
+          return el;
+        }),
+      );
+    },
+    [],
+  );
+
+  const handleDeleteElement = useCallback((id: string) => {
+    setElements((prev) => prev.filter((el) => el.id !== id));
+    setSelectedElementId((current) => (current === id ? null : current));
+  }, []);
 
   return (
     <div className="flex h-screen bg-background">

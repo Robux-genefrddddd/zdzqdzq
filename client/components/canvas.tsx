@@ -28,6 +28,12 @@ export function Canvas({
   const canvasRef = useRef<HTMLDivElement>(null);
   const [isCanvasCreating, setIsCanvasCreating] = useState(false);
   const [createStart, setCreateStart] = useState({ x: 0, y: 0 });
+  const [previewRect, setPreviewRect] = useState<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null>(null);
 
   const handleCanvasMouseDown = (e: React.MouseEvent) => {
     if (activeTool === "select") return;

@@ -72,8 +72,8 @@ export function Canvas({
   };
 
   const handleCanvasClick = (e: React.MouseEvent) => {
-    // Deselect when clicking empty canvas
-    if (e.target === canvasRef.current) {
+    // Deselect when clicking empty canvas (only if click is on the canvas itself, not a child)
+    if (e.currentTarget === e.target) {
       onSelectElement(null);
     }
   };

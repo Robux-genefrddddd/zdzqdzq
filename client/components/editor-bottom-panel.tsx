@@ -52,7 +52,15 @@ export function EditorBottomPanel({ selectedElement, elementsCount }: EditorBott
   // Default view when nothing selected
   if (!selectedElement || !selectedElement.properties) {
     return (
-      <div className="border-t border-border bg-background/50 px-6 py-3 text-xs text-muted-foreground flex items-center justify-between">
+      <div
+        className="border-t border-border bg-background/50 px-6 py-3 text-xs text-muted-foreground flex items-center justify-between pointer-events-auto"
+        onMouseDown={(e) => {
+          e.stopPropagation();
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
         <span>{elementsCount} element{elementsCount !== 1 ? "s" : ""} on canvas</span>
         <div className="flex items-center gap-4">
           <span className="text-xs text-muted-foreground/60">No element selected • Press V to select</span>

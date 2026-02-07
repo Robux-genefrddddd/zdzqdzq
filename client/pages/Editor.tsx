@@ -86,36 +86,34 @@ export default function Editor() {
         </div>
 
         {/* Canvas Area */}
-        <div className="flex-1 relative overflow-auto flex items-center justify-center">
-          {/* Canvas with subtle grid */}
-          <div
-            className="w-full h-full relative"
-            style={{
-              backgroundImage: `
-              linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, 0.02) 25%, rgba(255, 255, 255, 0.02) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.02) 75%, rgba(255, 255, 255, 0.02) 76%, transparent 77%, transparent),
-              linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, 0.02) 25%, rgba(255, 255, 255, 0.02) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.02) 75%, rgba(255, 255, 255, 0.02) 76%, transparent 77%, transparent)
-            `,
-              backgroundSize: "50px 50px",
-            }}
-          >
-            {/* Drop Zone */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="text-center space-y-2">
-                <div className="text-6xl opacity-20">📐</div>
-                <p className="text-muted-foreground text-sm opacity-50">
-                  Drag elements here to start designing
-                </p>
-              </div>
-            </div>
-          </div>
+        <div className="flex-1 relative overflow-auto">
+          <Canvas
+            initialLayers={editorData.pages[0]?.layers || []}
+            activeTool={activeTool}
+            onStateChange={setCanvasState}
+          />
         </div>
 
         {/* Floating Toolbar */}
-        <EditorToolbar />
+        <EditorToolbar activeTool={activeTool} onToolChange={setActiveTool} />
       </div>
 
-      {/* Right Panel */}
-      <EditorRightPanel />
+      {/* Right Panel - Properties */}
+      <EditorPropertiesPanel
+        selectedElement={selectedElement}
+        onUpdate={(updates) => {
+          if (canvasState && selectedElement) {
+            canvasState.updateElement(selectedElement.id, updates);
+            setCanvasState({ ...canvasState });
+          }
+        }}
+        onDelete={() => {
+          if (canvasState && selectedElement) {
+            canvasState.deleteElement(selectedElement.id);
+            setCanvasState({ ...canvasState });
+          }
+        }}
+      />
     </div>
   );
 }

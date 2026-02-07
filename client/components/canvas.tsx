@@ -97,12 +97,12 @@ export function Canvas({
       {/* Canvas Container */}
       <div
         style={{
-          transform: `translate(${canvasState.panX}px, ${canvasState.panY}px) scale(${canvasState.zoom})`,
+          transform: `translate(${panX}px, ${panY}px) scale(${zoom})`,
           transformOrigin: "0 0",
           transition: isCanvasCreating ? "none" : undefined,
         }}
       >
-        {canvasState.elements.length === 0 ? (
+        {elements.length === 0 ? (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="text-center space-y-2">
               <div className="text-6xl opacity-20">📐</div>
@@ -112,16 +112,16 @@ export function Canvas({
             </div>
           </div>
         ) : (
-          canvasState.elements.map((element) => (
+          elements.map((element) => (
             <CanvasElement
               key={element.id}
               element={element}
-              isSelected={canvasState.selectedElementId === element.id}
-              onSelect={() => canvasState.selectElement(element.id)}
+              isSelected={selectedElementId === element.id}
+              onSelect={() => onSelectElement(element.id)}
               onUpdate={(updates) =>
-                canvasState.updateElement(element.id, updates)
+                onUpdateElement(element.id, updates)
               }
-              zoom={canvasState.zoom}
+              zoom={zoom}
             />
           ))
         )}

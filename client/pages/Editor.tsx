@@ -43,6 +43,37 @@ export default function Editor() {
         displayType = shapeType.charAt(0).toUpperCase() + shapeType.slice(1);
       }
 
+      // Default dimensions based on shape type
+      let width = 200;
+      let height = 120;
+      let borderRadius = 8;
+
+      if (shapeType === "circle") {
+        width = 100;
+        height = 100;
+        borderRadius = 50;
+      } else if (shapeType === "triangle") {
+        width = 120;
+        height = 120;
+        borderRadius = 0;
+      } else if (shapeType === "polygon") {
+        width = 150;
+        height = 150;
+        borderRadius = 0;
+      } else if (shapeType === "line") {
+        width = 100;
+        height = 2;
+        borderRadius = 0;
+      } else if (shapeType === "arrow") {
+        width = 120;
+        height = 40;
+        borderRadius = 0;
+      } else if (shapeType === "star") {
+        width = 120;
+        height = 120;
+        borderRadius = 0;
+      }
+
       const newElement: Layer = {
         id: `layer-${Date.now()}`,
         name: `${displayType} ${elements.length + 1}`,
@@ -50,12 +81,12 @@ export default function Editor() {
         properties: {
           x,
           y,
-          width: 200,
-          height: 120,
+          width,
+          height,
           style: {
             fill: null,
             stroke: null,
-            borderRadius: shapeType === "circle" ? 100 : 8,
+            borderRadius,
             fontSize: type === "text" ? 14 : undefined,
             fontWeight: type === "text" ? "500" : undefined,
             opacity: 1,

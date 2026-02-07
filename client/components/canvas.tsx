@@ -9,8 +9,9 @@ interface CanvasProps {
   panX: number;
   panY: number;
   activeTool?: string;
+  activeShapeType?: string;
   onSelectElement: (id: string | null) => void;
-  onAddElement: (type: string, x: number, y: number) => string;
+  onAddElement: (type: string, x: number, y: number, shapeType?: string) => string;
   onUpdateElement: (id: string, updates: any) => void;
   onDeleteElement?: (id: string) => void;
   onDuplicateElement?: (id: string) => void;
